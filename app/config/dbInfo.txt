@@ -1,0 +1,93 @@
+1.#nftprofiledetails
+
+1.assetname =  Name of the assetname
+2.typeofart      
+3.dimension
+4.bio
+5.createrusername = username of who will mint the NFT.
+6.creatername = name of who will mint the NFT.
+7.createrwltaddress = Metamask A/C.
+8.ownerusername = username of who will buy the NFT otherwise creater will be the owner.
+9.ownername = name of who will buy the NFT otherwise creater will be the owner.
+10.ownerwltaddress = Metamask A/C of owner who will buy the NFT for now creater address will be the here.
+11.city = city of creater
+12.tokenid
+13.dateofcreation
+14.marking
+15.provenance
+16.estimatedvalue
+17.evidenceofownership
+18.nftimage
+19.nftimage1
+20.nftimage2
+21.nftimage3
+22.blockchain = like ETH, BNB
+23.validationstate = It will be 1."Not Started", 2."pending", 3."Validated"
+{
+    "Not Started" :=> when the user will mint the NFT then the validationstate state will be Not Started.
+    "pending" :=> if owner will send the NFT for validation the the validationstate will be pending.
+    "Validated" :=> If Any Validator validated any NFT then the validationstate will be validated.
+}
+24.validatorname = Here the name of validator who validates this NFT.
+25.validatorusername =  Here the username of validator who validates this NFT.
+26.validatorwltaddress = Here the Metamask Wlt address of validator who validates this NFT.
+27.nftcreationdate     =  moment().format() when the NFT mints.
+
+
+2.#nftForValidation
+
+1.assetname = NFT name which will be sending for validation
+2.tokenid = tokenid of NFT which will be sending for validation
+3.ownerusername = username of the owner of that NFT
+4.ownername 
+5.ownerwltaddress
+6.createrusername =  = username of the creater of that NFT
+7.creatername
+8.createrwltaddress
+9.address = wlt address who is sending the NFT for Validation, means owner wlt address.
+10.validationstate = It will be 1."pending", 2."Validated"
+{
+    "pending" :=> It will be pending autometically after sending any NFT for validation.
+    "Validated" :=> If Any Validator validated any NFT then the validationstate will be validated.
+}
+11.validatorname = Here the name of validator who validates this NFT.
+12.validatorusername =  Here the username of validator who validates this NFT.
+13.validatorwltaddress = Here the Metamask Wlt address of validator who validates this NFT.
+14.city = city of owner.
+15.homeaddress
+16.estimatedvalue = NFT estimated value by owner.
+17.validatornameforvld = Here will be the validator name the one owner is sending (1 NFT can be send to multiple validator).
+18.validatorusernameforvld = Here will be the validator username the one owner is sending.
+19.nftimage
+20.nftimage1
+21.nftimage2
+22.nftimage3
+23.sendforvalidationdate = moment().format() when the NFT is going to send for validation.
+
+3.#favouritenft
+
+1.assetname = name of NFT.
+2.tokenid = tokenid of NFT.
+3.validatorname = Validator name who will make that NFT favourit.
+4.validatorusername = Validator username who will make that NFT favourit.
+5.validatorwltaddress = Validator Metamask A/C address who will make that NFT favourit.
+6.name = name of user who will make that NFT favourit.
+7.username = username of user who will make that NFT favourit.
+8.userwltaddress = user Metamask A/C address who will make that NFT favourit.
+
+4.#userDetail #validatorDetail
+
+name = name of the user/validator
+username = 
+address = 
+bio
+profilepic
+profilebannerer
+homeaddress
+city
+email
+phone
+twitter 
+facebook
+instagram
+websiteurl
