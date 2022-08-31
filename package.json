@@ -5,12 +5,12 @@
   "main": "index.js",
   "engines": {
     "node": "18.7.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "devStart": "nodemon server.js"
-  },
+    },
+    "scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start": "node server.js",
+  "devStart": "nodemon server.js"
+},
   "author": "Shrish",
   "license": "ISC",
   "dependencies": {
@@ -29,7 +29,6 @@
     "mongoose": "^6.4.0",
     "moralis": "^1.9.0",
     "mssql": "^7.3.0",
-    "nodemon": "^2.0.15",
-    "serve": "^14.0.1"
+    "nodemon": "^2.0.15"
   }
 }
