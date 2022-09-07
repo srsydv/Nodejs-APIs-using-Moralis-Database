@@ -32,7 +32,13 @@
 25.validatorusername =  Here the username of validator who validates this NFT.
 26.validatorwltaddress = Here the Metamask Wlt address of validator who validates this NFT.
 27.nftcreationdate     =  moment().format() when the NFT mints.
-
+28.burnNFTstatus = true,False
+29.swapStatus = It will be 1."Not Started", 2."pending", 3."swaped"
+{
+    "Not Started" :=> when the user will mint the NFT then the swapStatus state will be Not Started.
+    "pending" :=> if owner will send the NFT for swap then the swapStatus will be "Pending, Swapping Request with tokenId x".
+    "swaped" :=> If req reciever accept the request It will be "Swapped with tokenId x"
+}
 
 2.#nftForValidation
 
@@ -91,3 +97,24 @@ twitter
 facebook
 instagram
 websiteurl
+
+
+5.#activityForUser
+
+assetname
+tokenid
+toswapassetname = name of the asset from which you want to change your asset
+toswaptokenid = tokenid of the asset from which you want to change your asset
+swaprequesttouserwltAddressss = wollet address of that NFT owner
+swaprequesttoname = name of that NFT owner
+swaprequesttousername = username of that NFT owner
+username = your username
+name = your name
+userwltaddress = your wlt address
+Message = Message can be anything which will be the user activity
+{
+    1.Swap Request
+    2.Swap Request Accepted
+    3.
+}
+DateAndTime = moment().format() for every activity

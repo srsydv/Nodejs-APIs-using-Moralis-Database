@@ -3,9 +3,9 @@ const signupSchema = schema.signupSchemas;
 const Moralis = require("moralis/node");
 
 findName = async (address) => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         console.log("Hi3");
-        let data = await signupSchema.find({address:address});
+        let data = await signupSchema.find({ address: address });
         // console.log("Hi4",data.length);
         if (data) {
             resolve(data);
@@ -43,8 +43,24 @@ userDetailByAddress = async (address) => {
     })
 }
 
+NFTdetails = async (clm) => {
+    return new Promise(async (resolve, reject) => {
+        let nftprofiledetails = Moralis.Object.extend("nftprofiledetails");
+        const query = new Moralis.Query(nftprofiledetails);
+        query.equalTo("tokenid", clm.toswaptokenid);
+        query.equalTo("assetname", clm.toswapassetname);
+        let data = await query.find();
+        if (data) {
+            resolve(data[0]);
+        } else {
+            reject("Error");
+        }
+    })
+}
+
 module.exports = {
     findName,
     userDetail,
+    NFTdetails,
     userDetailByAddress
 }

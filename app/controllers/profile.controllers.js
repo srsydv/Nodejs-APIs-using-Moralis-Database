@@ -6,9 +6,6 @@ const moment = require('moment');
 const schema = require("../schema/schema.model");
 const mongodb = require('mongodb');
 const Moralis = require("moralis/node");
-// const signupSchema = schema.signupSchemas;
-// const NFTprofileDetails = schema.NFTprofileDetails;
-// const favouriteNFTs = schema.favouriteNFTs
 const profileModel = require('../models/profile.model')
 
 const serverUrl = process.env.serverUrl;
@@ -29,7 +26,7 @@ exports.editProfile = async (req, res) => {
         const query = new Moralis.Query(editUserDetail);
         query.equalTo("address", user.address);
         let addUserDetail = await query.first();
-        if(addUserDetail){
+        if (addUserDetail) {
             addUserDetail.set("name", req.body.name);
             addUserDetail.set("username", req.body.username);
             addUserDetail.set("bio", req.body.bio);
@@ -47,7 +44,7 @@ exports.editProfile = async (req, res) => {
 
             res.send({ result: "updated" })
         }
-        else{
+        else {
             res.send({ result: "User Not Found" })
         }
     }
@@ -87,9 +84,11 @@ exports.createNFT = async (req, res) => {
     newNft.set("blockchain", req.body.blockchain);
     newNft.set("validationstate", "Not Started");
     newNft.set("nftcreationdate", moment().format());
+    newNft.set("burnNFTstatus", "False");
+    newNft.set("swapStatus", "Not Started");
 
-let nft = await newNft.save();
-res.json(nft);
+    let nft = await newNft.save();
+    res.json(nft);
 }
 
 
@@ -133,14 +132,14 @@ exports.GACfavouriteNFTsofUser = async (req, res) => {
     const userDetail = await profileModel.userDetailByAddress(user.address);
 
     let favouritenft = Moralis.Object.extend("favouritenft");
-        const query = new Moralis.Query(favouritenft);
-        query.equalTo("username", userDetail.attributes.username);
-        let data1 = await query.find();
-        let data2 = await query.count();
+    const query = new Moralis.Query(favouritenft);
+    query.equalTo("username", userDetail.attributes.username);
+    let data1 = await query.find();
+    let data2 = await query.count();
     res.send(
         {
-            favouriteNFTsDetails : data1,
-            favouriteNFTsCount : data2
+            favouriteNFTsDetails: data1,
+            favouriteNFTsCount: data2
         }
     );
 
@@ -153,16 +152,16 @@ exports.UserRemoveFromFvrt = async (req, res) => {
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const userDetail = await profileModel.userDetailByAddress(user.address);
     let favouritenft = Moralis.Object.extend("favouritenft");
-        const query = new Moralis.Query(favouritenft);
-        query.equalTo("username", userDetail.attributes.username);
-        query.equalTo("userwltaddress", user.address);
-        query.equalTo("tokenid", req.body.tokenid);
-        query.equalTo("assetname", req.body.assetname);
-        const fvtnft = await query.first();
-        if (fvtnft) {
-            await fvtnft.destroy();
-            res.send({result : "removed"})
-          }
+    const query = new Moralis.Query(favouritenft);
+    query.equalTo("username", userDetail.attributes.username);
+    query.equalTo("userwltaddress", user.address);
+    query.equalTo("tokenid", req.body.tokenid);
+    query.equalTo("assetname", req.body.assetname);
+    const fvtnft = await query.first();
+    if (fvtnft) {
+        await fvtnft.destroy();
+        res.send({ result: "removed" })
+    }
 }
 
 
@@ -172,10 +171,10 @@ exports.SearchNFTbyname = async (req, res) => {
         {
             assetname: req.body.assetname
         });
-    if(data.length>0){
+    if (data.length > 0) {
         res.send(data);
     }
-    else{
+    else {
         res.send({
             message: "No NFT found"
         });
@@ -189,17 +188,17 @@ exports.sellNFTforMP = async (req, res) => {
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const userDetail = await profileModel.userDetailByAddress(user.address);
     const query = new Moralis.Query("nftprofiledetails");
-        query.equalTo("assetname", req.body.assetname);
-        query.equalTo("tokenid", req.body.tokenid);
-        query.equalTo("ownerusername", userDetail.attributes.username);
-        let sellOnMP = await query.first();
-        if(sellOnMP){
-            sellOnMP.set("onselldate", moment().format());
-            sellOnMP.set("sellstatus", "Pending");
-            await sellOnMP.save();
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
+    query.equalTo("ownerusername", userDetail.attributes.username);
+    let sellOnMP = await query.first();
+    if (sellOnMP) {
+        sellOnMP.set("onselldate", moment().format());
+        sellOnMP.set("sellstatus", "Pending");
+        await sellOnMP.save();
 
-            res.send({ result: sellOnMP })
-        }
+        res.send({ result: sellOnMP })
+    }
 }
 
 
@@ -210,19 +209,19 @@ exports.buyNFT = async (req, res) => {
     const userDetail = await profileModel.userDetailByAddress(user.address);
 
     const query = new Moralis.Query("nftprofiledetails");
-        query.equalTo("assetname", req.body.assetname);
-        query.equalTo("tokenid", req.body.tokenid);
-        let sellOnMP = await query.first();
-        if(sellOnMP){
-            sellOnMP.set("solddate", moment().format());
-            sellOnMP.set("sellstatus", "Sold");
-            sellOnMP.set("ownerusername", userDetail.attributes.username);
-            sellOnMP.set("ownername", userDetail.attributes.name);
-            sellOnMP.set("ownerwltaddress", userDetail.attributes.address);
-            await sellOnMP.save();
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
+    let sellOnMP = await query.first();
+    if (sellOnMP) {
+        sellOnMP.set("solddate", moment().format());
+        sellOnMP.set("sellstatus", "Sold");
+        sellOnMP.set("ownerusername", userDetail.attributes.username);
+        sellOnMP.set("ownername", userDetail.attributes.name);
+        sellOnMP.set("ownerwltaddress", userDetail.attributes.address);
+        await sellOnMP.save();
 
-            res.send({ result: sellOnMP })
-        }
+        res.send({ result: sellOnMP })
+    }
     // let result = await NFTprofileDetails.updateMany(
     //     {tokenid : req.body.tokenid,
     //         assetname : req.body.assetname},
@@ -233,9 +232,107 @@ exports.buyNFT = async (req, res) => {
     //             sellstatus: 'Sold',
     //             owner: userDetail[0].name,
     //             owneraddress: userDetail[0].address
-                
+
     //         }
     //     }
     // )
     // res.send(result);
+}
+
+
+exports.reqForSwapAsset = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const userDetail = await profileModel.userDetailByAddress(user.address);
+
+    const clm = {
+        toswaptokenid: req.body.toswaptokenid,
+        toswapassetname: req.body.toswapassetname
+    }
+    const NFTdetails = await profileModel.NFTdetails(clm);
+
+    let userActivity = Moralis.Object.extend("activityForUser");
+    let reqForSwap = new userActivity();
+    reqForSwap.set("assetname", req.body.assetname);
+    reqForSwap.set("tokenid", req.body.tokenid);
+    reqForSwap.set("toswapassetname", req.body.toswapassetname);
+    reqForSwap.set("toswaptokenid", req.body.toswaptokenid);
+    reqForSwap.set("swaprequesttouserwltAddress", NFTdetails.attributes.ownerwltaddress);
+    reqForSwap.set("swaprequesttoname", NFTdetails.attributes.ownername);
+    reqForSwap.set("swaprequesttousername", NFTdetails.attributes.ownerusername);
+    reqForSwap.set("username", userDetail.attributes.username);
+    reqForSwap.set("name", userDetail.attributes.name);
+    reqForSwap.set("userwltaddress", user.address);
+    reqForSwap.set("Message", "Swap Request");
+    reqForSwap.set("DateAndTime", moment().format());
+    await reqForSwap.save();
+
+    // const reqForSwapToOtherUser = await profileModel.activityOfSwapToOtherUser(clm);
+
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
+    let swapNFT = await query.first();
+    if (swapNFT) {
+        swapNFT.set("swapStatus", `Pending, Swapping Request with tokenId ${req.body.toswaptokenid}`);
+        await swapNFT.save();
+    }
+    res.send({ result: "Swap Request Sent, Successfully" })
+}
+
+
+
+exports.acceptSwapRequest = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const userDetail = await profileModel.userDetailByAddress(user.address);
+
+    const clm = {
+        toswaptokenid: req.body.toswaptokenid,
+        toswapassetname: req.body.toswapassetname
+    }
+    const NFTdetails = await profileModel.NFTdetails(clm);
+    let userActivity = Moralis.Object.extend("activityForUser");
+    let reqForSwap = new userActivity();
+    reqForSwap.set("assetname", req.body.assetname);
+    reqForSwap.set("tokenid", req.body.tokenid);
+    reqForSwap.set("toswapassetname", req.body.toswapassetname);
+    reqForSwap.set("toswaptokenid", req.body.toswaptokenid);
+    reqForSwap.set("swaprequesttouserwltAddress", NFTdetails.attributes.ownerwltaddress);
+    reqForSwap.set("swaprequesttoname", NFTdetails.attributes.ownername);
+    reqForSwap.set("swaprequesttousername", NFTdetails.attributes.ownerusername);
+    reqForSwap.set("username", userDetail.attributes.username);
+    reqForSwap.set("name", userDetail.attributes.name);
+    reqForSwap.set("userwltaddress", user.address);
+    reqForSwap.set("Message", "Swap Request Accepted");
+    reqForSwap.set("DateAndTime", moment().format());
+    await reqForSwap.save();
+
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
+    let swappedNFT = await query.first();
+    if (swappedNFT) {
+        swappedNFT.set("swapStatus", `Swapped with tokenId ${req.body.toswaptokenid}`);
+        swappedNFT.set("ownerusername", NFTdetails.attributes.ownerusername);
+        swappedNFT.set("ownername", NFTdetails.attributes.ownername)
+        swappedNFT.set("ownerwltaddress", NFTdetails.attributes.ownerwltaddress)
+        await swappedNFT.save();
+    }
+
+    const newquery = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.toswapassetname);
+    query.equalTo("tokenid", req.body.toswaptokenid);
+    let changeOwnerNFT = await newquery.first();
+    if (changeOwnerNFT) {
+        changeOwnerNFT.set("swapStatus", `Swapped with tokenId ${req.body.tokenid}`);
+        changeOwnerNFT.set("ownerusername", userDetail.attributes.username);
+        changeOwnerNFT.set("ownername", userDetail.attributes.name)
+        changeOwnerNFT.set("ownerwltaddress", user.address)
+        await changeOwnerNFT.save();
+    }
+
+    res.send({ result: "Swapped Successfully" })
 }

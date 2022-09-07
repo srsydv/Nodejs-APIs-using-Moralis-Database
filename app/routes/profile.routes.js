@@ -18,7 +18,7 @@ module.exports = app => {
     app.post("/FavouriteNFTsofUser",access_token.authenticateJWT, profileControler.FavouriteNFTsofUser)
 
     //Get and count Favourite NFTs of User
-    app.get("/GACfavouriteNFTsofUser",access_token.authenticateJWT, profileControler.GACfavouriteNFTsofUser);
+    app.get("/GACfavouriteNFTsofUser", profileControler.GACfavouriteNFTsofUser);
 
     //Remove NFT from favourite list of User
     app.delete("/UserRemoveFromFvrt",access_token.authenticateJWT, profileControler.UserRemoveFromFvrt)
@@ -31,4 +31,10 @@ module.exports = app => {
 
     //Buy NFT by User
     app.put("/buyNFT",access_token.authenticateJWT, profileControler.buyNFT)
+
+    //request for Swap Asset
+    app.post("/reqForSwapAsset",access_token.authenticateJWT, profileControler.reqForSwapAsset)
+
+    //Accept Swap Request
+    app.post("/acceptSwapRequest",access_token.authenticateJWT, profileControler.acceptSwapRequest)
 }

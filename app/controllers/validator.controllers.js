@@ -34,7 +34,7 @@ exports.validatorEditProfile = async (req, res) => {
         const query = new Moralis.Query(validatorDetail);
         query.equalTo("address", user.address);
         let addvalidatorDetail = await query.first();
-        if(addvalidatorDetail){
+        if (addvalidatorDetail) {
             addvalidatorDetail.set("name", req.body.name);
             addvalidatorDetail.set("username", req.body.username);
             addvalidatorDetail.set("bio", req.body.bio);
@@ -52,7 +52,7 @@ exports.validatorEditProfile = async (req, res) => {
 
             res.send({ result: "updated" })
         }
-        else{
+        else {
             res.send({ result: "User Not Found" })
         }
     }
@@ -76,30 +76,30 @@ login2 = async (clm) => {
 insertAdd = async (clm) => {
     return new Promise(async (resolve, reject) => {
         let validatorDetail = Moralis.Object.extend("validatorDetail");
-    let addValidator = new validatorDetail();
-    addValidator.set("address", clm.address);
-    addValidator.set("hostname", clm.hostname);
-    addValidator.set("ip", clm.ip);
-    addValidator.set("astRequestAt", clm.astRequestAt);
-    addValidator.set("lastLogin", moment().format());
-    addValidator.set("sessionID", clm.sessionID);
-    addValidator.set("username", clm.address)
+        let addValidator = new validatorDetail();
+        addValidator.set("address", clm.address);
+        addValidator.set("hostname", clm.hostname);
+        addValidator.set("ip", clm.ip);
+        addValidator.set("astRequestAt", clm.astRequestAt);
+        addValidator.set("lastLogin", moment().format());
+        addValidator.set("sessionID", clm.sessionID);
+        addValidator.set("username", clm.address)
 
-    addValidator.set("name", "");
-    addValidator.set("username", "");
-    addValidator.set("bio", "");
-    addValidator.set("profilepic", "");
-    addValidator.set("profilebanner", "");
-    addValidator.set("homeaddress", "");
-    addValidator.set("city", "");
-    addValidator.set("email", "");
-    addValidator.set("phone", "");
-    addValidator.set("twitter", "");
-    addValidator.set("facebook", "");
-    addValidator.set("instagram", "");
-    addValidator.set("websiteurl", "");
+        addValidator.set("name", "");
+        addValidator.set("username", "");
+        addValidator.set("bio", "");
+        addValidator.set("profilepic", "");
+        addValidator.set("profilebanner", "");
+        addValidator.set("homeaddress", "");
+        addValidator.set("city", "");
+        addValidator.set("email", "");
+        addValidator.set("phone", "");
+        addValidator.set("twitter", "");
+        addValidator.set("facebook", "");
+        addValidator.set("instagram", "");
+        addValidator.set("websiteurl", "");
 
-    await addValidator.save();
+        await addValidator.save();
         resolve("done");
     })
 }
@@ -145,8 +145,8 @@ exports.NFTforValidation = async function (req, res) {
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const detailsOfUser = await validatorModel.detailsOfUser(user.address)
     const clm = {
-        tokenid : req.body.tokenid,
-        assetname : req.body.assetname
+        tokenid: req.body.tokenid,
+        assetname: req.body.assetname
     }
     const NFTdetails = await validatorModel.NFTdetails(clm);
 
@@ -174,27 +174,42 @@ exports.NFTforValidation = async function (req, res) {
     ForValidation.set("nftimage3", NFTdetails.attributes.nftimage3);
     ForValidation.set("sendforvalidationdate", moment().format());
     await ForValidation.save();
-    
+
     let nftprofiledetails = Moralis.Object.extend("nftprofiledetails");
     const query = new Moralis.Query(nftprofiledetails);
-        query.equalTo("tokenid", req.body.tokenid);
-        query.equalTo("assetname", req.body.assetname);
-        let oldNFT = await query.first();
-        oldNFT.set("validationstate", "pending");
-        await oldNFT.save();
+    query.equalTo("tokenid", req.body.tokenid);
+    query.equalTo("assetname", req.body.assetname);
+    let oldNFT = await query.first();
+    oldNFT.set("validationstate", "pending");
+    await oldNFT.save();
 
-        res.send({
-            message: 'NFT has been sent'
-        })
+
+    let ValidationActivity = Moralis.Object.extend("activityForValidator");
+    let activityForValidation = new ValidationActivity();
+    activityForValidation.set("assetname", req.body.assetname);
+    activityForValidation.set("tokenid", req.body.tokenid);
+    activityForValidation.set("ownerusername", NFTdetails.attributes.ownerusername);
+    activityForValidation.set("ownername", NFTdetails.attributes.ownername);
+    activityForValidation.set("ownerwltaddress", NFTdetails.attributes.ownerwltaddress);
+    activityForValidation.set("createrusername", NFTdetails.attributes.createrusername);
+    activityForValidation.set("creatername", NFTdetails.attributes.creatername);
+    activityForValidation.set("createrwltaddress", NFTdetails.attributes.createrwltaddress);
+    activityForValidation.set("userWltAddress", user.address);
+    activityForValidation.set("Message", "Validation Request");
+    activityForValidation.set("DateAndTime", moment().format());
+    await activityForValidation.save();
+    res.send({
+        message: 'NFT has been sent'
+    })
 }
 
 exports.getAllNFTs = async (req, res) => {
-    let data = await NFTprofileDetails.find({},{assetname:1, owner:1, homeaddress : 1, nftimage : 1, estimatedvalue : 1, onsale : 1, tokenid : 1});;
+    let data = await NFTprofileDetails.find({}, { assetname: 1, owner: 1, homeaddress: 1, nftimage: 1, estimatedvalue: 1, onsale: 1, tokenid: 1 });;
     res.json(data)
 }
 
 exports.getNFTForValidation = async (req, res) => {
-    let data = await NFTValidation.find({tokenid:req.body.tokenid,assetname:req.body.assetname});
+    let data = await NFTValidation.find({ tokenid: req.body.tokenid, assetname: req.body.assetname });
     res.json(data)
 }
 
@@ -206,41 +221,80 @@ exports.validatateNFT = async (req, res) => {
 
     const validatorDetail = await validatorModel.validatorDetail(user.address);
 
+    const clm = {
+        tokenid: req.body.tokenid,
+        assetname: req.body.assetname
+    }
+    const NFTdetails = await validatorModel.NFTdetails(clm);
+
     let nftForValidation = Moralis.Object.extend("nftForValidation");
     const query = new Moralis.Query(nftForValidation);
     query.equalTo("tokenid", req.body.tokenid);
     query.equalTo("assetname", req.body.assetname);
     query.equalTo("validatorusernameforvld", validatorDetail.attributes.username);
-    
+
     let NFTDetail = await query.first();
-    let flag=0;
-    if(NFTDetail){
+    let flag = 0;
+    if (NFTDetail) {
         NFTDetail.set("validationstate", "Validated");
         NFTDetail.set("validatorname", validatorDetail.attributes.name);
         NFTDetail.set("validatorusername", validatorDetail.attributes.username);
         NFTDetail.set("validatorwltaddress", user.address);
         await NFTDetail.save();
-        flag=1;
+        flag = 1;
     }
+
+    let userActivity = Moralis.Object.extend("activityForUser");
+    let ForValidation = new userActivity();
+    ForValidation.set("assetname", req.body.assetname);
+    ForValidation.set("tokenid", req.body.tokenid);
+    ForValidation.set("username", NFTdetails.attributes.ownerusername);
+    ForValidation.set("name", NFTdetails.attributes.ownername);
+    ForValidation.set("userwltaddress", NFTdetails.attributes.ownerwltaddress);
+    ForValidation.set("validatorwltaddress", user.address);
+    ForValidation.set("validatorname", validatorDetail.attributes.name);
+    ForValidation.set("validatorusername", validatorDetail.attributes.username);
+    ForValidation.set("Message", "Charged NFT");
+    ForValidation.set("DateAndTime", moment().format());
+    await ForValidation.save();
+
+    let ValidationActivity = Moralis.Object.extend("activityForValidator");
+    let activityForValidation = new ValidationActivity();
+    activityForValidation.set("assetname", req.body.assetname);
+    activityForValidation.set("tokenid", req.body.tokenid);
+    activityForValidation.set("validatorwltaddress", user.address);
+    activityForValidation.set("validatorname", validatorDetail.attributes.name);
+    activityForValidation.set("validatorusername", validatorDetail.attributes.username);
+    activityForValidation.set("usernameofuser", NFTdetails.attributes.ownerusername);
+    activityForValidation.set("nameofuser", NFTdetails.attributes.ownername);
+    activityForValidation.set("userwltaddress", NFTdetails.attributes.ownerwltaddress);
+    activityForValidation.set("createrusername", NFTdetails.attributes.createrusername);
+    activityForValidation.set("creatername", NFTdetails.attributes.creatername);
+    activityForValidation.set("createrwltaddress", NFTdetails.attributes.createrwltaddress);
+    activityForValidation.set("userWltAddress", user.address);
+    activityForValidation.set("Message", "Validation Done");
+    activityForValidation.set("DateAndTime", moment().format());
+    await activityForValidation.save();
 
     let nftprofiledetails = Moralis.Object.extend("nftprofiledetails");
     const query1 = new Moralis.Query(nftprofiledetails);
-        query1.equalTo("tokenid", req.body.tokenid);
-        query1.equalTo("assetname", req.body.assetname);
-        let oldNFT = await query1.first();
-        if(oldNFT){
-            oldNFT.set("validationstate", "Validated");
-            oldNFT.set("validatorname", validatorDetail.attributes.name);
-            oldNFT.set("validatorusername", validatorDetail.attributes.username);
-            oldNFT.set("validatorwltaddress", user.address);
-            if(flag==1){
-                await oldNFT.save();
-                res.send({result : "Validated"})
-            }
+    query1.equalTo("tokenid", req.body.tokenid);
+    query1.equalTo("assetname", req.body.assetname);
+    let oldNFT = await query1.first();
+    if (oldNFT) {
+        oldNFT.set("validationstate", "Validated");
+        oldNFT.set("validatorname", validatorDetail.attributes.name);
+        oldNFT.set("validatorusername", validatorDetail.attributes.username);
+        oldNFT.set("validatorwltaddress", user.address);
+        if (flag == 1) {
+            await oldNFT.save();
+            res.send({ result: "Validated" })
         }
+    }
 
-    
-    
+
+
+
 }
 
 
@@ -251,10 +305,10 @@ exports.RequestforValidation = async (req, res) => {
     const validatorDetail = await validatorModel.validatorDetail(user.address);
 
     let nftForValidation = Moralis.Object.extend("nftForValidation");
-        const query = new Moralis.Query(nftForValidation);
-        query.equalTo("validatorusernameforvld", validatorDetail.attributes.username);
-        query.equalTo("validationstate", "pending");
-        let data = await query.find();
+    const query = new Moralis.Query(nftForValidation);
+    query.equalTo("validatorusernameforvld", validatorDetail.attributes.username);
+    query.equalTo("validationstate", "pending");
+    let data = await query.find();
     res.send(data);
 
 }
@@ -267,10 +321,10 @@ exports.MyValidatedNFT = async (req, res) => {
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const validatorDetail = await validatorModel.validatorDetail(user.address);
     let userDetail = Moralis.Object.extend("nftForValidation");
-        const query = new Moralis.Query(userDetail);
-        query.equalTo("validatorusernameforvld", validatorDetail.attributes.username);
-        query.equalTo("validationstate", "Validated");
-        let data = await query.find();
+    const query = new Moralis.Query(userDetail);
+    query.equalTo("validatorusernameforvld", validatorDetail.attributes.username);
+    query.equalTo("validationstate", "Validated");
+    let data = await query.find();
     res.send(data);
 }
 
@@ -300,14 +354,14 @@ exports.GACfavouriteNFTsofValidator = async (req, res) => {
     const validatorDetail = await validatorModel.validatorDetail(user.address);
 
     let favouritenft = Moralis.Object.extend("favouritenft");
-        const query = new Moralis.Query(favouritenft);
-        query.equalTo("validatorusername", validatorDetail.attributes.username);
-        let data1 = await query.find();
-        let data2 = await query.count();
+    const query = new Moralis.Query(favouritenft);
+    query.equalTo("validatorusername", validatorDetail.attributes.username);
+    let data1 = await query.find();
+    let data2 = await query.count();
     res.send(
         {
-            favouriteNFTsDetails : data1,
-            favouriteNFTsCount : data2
+            favouriteNFTsDetails: data1,
+            favouriteNFTsCount: data2
         }
     );
 }
@@ -320,14 +374,14 @@ exports.RemoveFromFvrt = async (req, res) => {
     const validatorDetail = await validatorModel.validatorDetail(user.address);
 
     let favouritenft = Moralis.Object.extend("favouritenft");
-        const query = new Moralis.Query(favouritenft);
-        query.equalTo("validatorusername", validatorDetail.attributes.username);
-        query.equalTo("validatorwltaddress", user.address);
-        query.equalTo("tokenid", req.body.tokenid);
-        query.equalTo("assetname", req.body.assetname);
-        const fvtnft = await query.first();
-        if (fvtnft) {
-            await fvtnft.destroy();
-            res.send({result : "removed"})
-          }
+    const query = new Moralis.Query(favouritenft);
+    query.equalTo("validatorusername", validatorDetail.attributes.username);
+    query.equalTo("validatorwltaddress", user.address);
+    query.equalTo("tokenid", req.body.tokenid);
+    query.equalTo("assetname", req.body.assetname);
+    const fvtnft = await query.first();
+    if (fvtnft) {
+        await fvtnft.destroy();
+        res.send({ result: "removed" })
+    }
 }

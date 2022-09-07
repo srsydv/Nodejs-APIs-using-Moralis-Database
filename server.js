@@ -47,24 +47,15 @@ require("./app/routes/validator.routes.js")(app);
 require("./app/routes/dashboard.routes.js")(app);
 
 
-// serverUrl: `https://hcp8bffs36lu.usemoralis.com:2053/server`,
-//     appId: `z6XNskF62yxOZh7Ege0yYG4MmlkqHRLAQAV2lHNH`
-// set port, listen for requests
-// const PORT = process.env.PORT || 3000;
 const PORT = process.env.PORT ||4000;
-app.listen(PORT , async() => {
-  console.log(`Server is running on ${PORT} port `);
+app.listen(3000 , async() => {
+  console.log(`Server is running on 3000 port `);
   await Moralis.start({
-    serverUrl: `https://hepeekqpfgaj.usemoralis.com:2053/server`,
-    appId: `3FIDhZEnSGghRABLBfsj6RUNpcS7HVE7s8ErdO6Y`
+    serverUrl: `https://pgx0oftxah1q.usemoralis.com:2053/server`,
+    appId: `NwVogcYzjG5iPnAvgdyseiz14NnOAnBYE7qGVeoK`
   });
 });
 
 
-// https://obscure-crag-36363.herokuapp.com/
 
-// "scripts": {
-//   "test": "echo \"Error: no test specified\" && exit 1",
-//   "start": "node server.js",
-//   "devStart": "nodemon server.js"
-// },
+// https://obscure-crag-36363.herokuapp.com/
