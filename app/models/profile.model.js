@@ -45,6 +45,22 @@ userDetailByAddress = async (address) => {
 
 NFTdetails = async (clm) => {
     return new Promise(async (resolve, reject) => {
+        console.log("ffff", clm);
+        let nftprofiledetails = Moralis.Object.extend("nftprofiledetails");
+        const query = new Moralis.Query(nftprofiledetails);
+        query.equalTo("tokenid", clm.tokenid);
+        query.equalTo("assetname", clm.assetname);
+        let data = await query.find();
+        if (data) {
+            resolve(data[0]);
+        } else {
+            reject("Error");
+        }
+    })
+}
+
+NFTdetailForMarket = async (clm) => {
+    return new Promise(async (resolve, reject) => {
         let nftprofiledetails = Moralis.Object.extend("nftprofiledetails");
         const query = new Moralis.Query(nftprofiledetails);
         query.equalTo("tokenid", clm.toswaptokenid);
@@ -58,9 +74,25 @@ NFTdetails = async (clm) => {
     })
 }
 
+validatorDetails = async (address) => {
+    return new Promise(async (resolve, reject) => {
+        let nftprofiledetails = Moralis.Object.extend("validatorDetail");
+        const query = new Moralis.Query(nftprofiledetails);
+        query.equalTo("address", address);
+        let data = await query.find();
+        if (data) {
+            resolve(data[0]);
+        } else {
+            reject("Error");
+        }
+    })
+}
+
 module.exports = {
     findName,
     userDetail,
     NFTdetails,
-    userDetailByAddress
+    NFTdetailForMarket,
+    userDetailByAddress,
+    validatorDetails
 }

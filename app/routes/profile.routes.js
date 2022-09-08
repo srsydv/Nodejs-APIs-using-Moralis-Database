@@ -37,4 +37,7 @@ module.exports = app => {
 
     //Accept Swap Request
     app.post("/acceptSwapRequest",access_token.authenticateJWT, profileControler.acceptSwapRequest)
+
+    //Burn NFT
+    app.post("/burnNFT",access_token.authenticateJWT, profileControler.burnNFT)
 }

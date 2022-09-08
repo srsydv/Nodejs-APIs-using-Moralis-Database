@@ -11,20 +11,20 @@ const NFTprofileDetails = schema.NFTprofileDetails;
 const NFTValidation = schema.NFTValidations
 
 exports.PriceRange = async (req, res) => {
-        const query = new Moralis.Query("nftprofiledetails");
-        query.greaterThan("estimatedvalue", req.body.to);
-        query.lessThan("estimatedvalue", req.body.from);
-        let data = await query.find();
-        // let data = await query.limit(30);
-        // let data1 = await query.skip(30);
+    const query = new Moralis.Query("nftprofiledetails");
+    query.greaterThan("estimatedvalue", req.body.to);
+    query.lessThan("estimatedvalue", req.body.from);
+    let data = await query.find();
+    // let data = await query.limit(30);
+    // let data1 = await query.skip(30);
     res.json(data)
 }
 
 
 exports.SearchNFTbyname = async (req, res) => {
     const query = new Moralis.Query("nftprofiledetails");
-        query.equalTo("assetname", req.body.assetname);
-        let data = await query.find();
+    query.equalTo("assetname", req.body.assetname);
+    let data = await query.find();
     res.json(data)
 
 }
@@ -33,11 +33,11 @@ exports.MarketPlaceNFTs = async (req, res) => {
     const query = new Moralis.Query("nftprofiledetails");
     const pageSize = 30;
     const toSkip = ((req.body.page - 1) * pageSize);
-    if(req.body.to && req.body.from){
+    if (req.body.to && req.body.from) {
         query.greaterThan("estimatedvalue", req.body.to);
         query.lessThan("estimatedvalue", req.body.from);
     }
-    if(req.body.blockchain){
+    if (req.body.blockchain) {
         query.equalTo("blockchain", req.body.blockchain);
     }
     // query.ascending("tokenid");

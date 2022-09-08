@@ -49,8 +49,8 @@ validatorDetail = async (address) => {
 }
 
 NFTdetailsForValidation = async (validatorusername) => {
-    return new Promise(async(resolve, reject) => {
-        let data = await NFTValidation.find({validatorusername : validatorusername});
+    return new Promise(async (resolve, reject) => {
+        let data = await NFTValidation.find({ validatorusername: validatorusername });
         if (data) {
             resolve(data);
         } else {
@@ -59,10 +59,24 @@ NFTdetailsForValidation = async (validatorusername) => {
     })
 }
 
+checkValidator = async (username) => {
+    return new Promise(async (resolve, reject) => {
+        let nftprofiledetails = Moralis.Object.extend("validatorDetail");
+        const query = new Moralis.Query(nftprofiledetails);
+        query.equalTo("username", username);
+        let data = await query.find();
+        if (data) {
+            resolve(data[0]);
+        } else {
+            reject("Error");
+        }
+    })
+}
 
 module.exports = {
     detailsOfUser,
     NFTdetails,
     validatorDetail,
-    NFTdetailsForValidation
+    NFTdetailsForValidation,
+    checkValidator
 }

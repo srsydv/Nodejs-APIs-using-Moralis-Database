@@ -82,30 +82,30 @@ const UpdateLoginLogs = async (clm) => {
 const insertAdd = async (clm) => {
     return new Promise(async (resolve, reject) => {
         let userDetail = Moralis.Object.extend("userDetail");
-    let adduser = new userDetail();
-    adduser.set("address", clm.address);
-    adduser.set("hostname", clm.hostname);
-    adduser.set("ip", clm.ip);
-    adduser.set("astRequestAt", clm.astRequestAt);
-    adduser.set("lastLogin", moment().format());
-    adduser.set("sessionID", clm.sessionID);
-    adduser.set("username", clm.address)
+        let adduser = new userDetail();
+        adduser.set("address", clm.address);
+        adduser.set("hostname", clm.hostname);
+        adduser.set("ip", clm.ip);
+        adduser.set("astRequestAt", clm.astRequestAt);
+        adduser.set("lastLogin", moment().format());
+        adduser.set("sessionID", clm.sessionID);
+        adduser.set("username", clm.address)
 
-    adduser.set("name", "");
-    adduser.set("username", "");
-    adduser.set("bio", "");
-    adduser.set("profilepic", "");
-    adduser.set("profilebanner", "");
-    adduser.set("homeaddress", "");
-    adduser.set("city", "");
-    adduser.set("email", "");
-    adduser.set("phone", "");
-    adduser.set("twitter", "");
-    adduser.set("facebook", "");
-    adduser.set("instagram", "");
-    adduser.set("websiteurl", "");
+        adduser.set("name", "");
+        adduser.set("username", "");
+        adduser.set("bio", "");
+        adduser.set("profilepic", "");
+        adduser.set("profilebanner", "");
+        adduser.set("homeaddress", "");
+        adduser.set("city", "");
+        adduser.set("email", "");
+        adduser.set("phone", "");
+        adduser.set("twitter", "");
+        adduser.set("facebook", "");
+        adduser.set("instagram", "");
+        adduser.set("websiteurl", "");
 
-    await adduser.save();
+        await adduser.save();
         resolve("done");
     })
 }

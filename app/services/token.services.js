@@ -65,8 +65,8 @@ const authenticateJWT = async (req, res, next) => {
                 //     res.status(480).send({ message: "You are Disabled" })
                 // }
                 // else {
-                    next();
-                    // await Authtable.UpdateLoginLogsAgain(authuser1)
+                next();
+                // await Authtable.UpdateLoginLogsAgain(authuser1)
                 // }
 
             }

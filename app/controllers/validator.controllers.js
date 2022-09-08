@@ -25,7 +25,7 @@ exports.validatorEditProfile = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)
-    const userDetail = await validatorModel.validatorDetail(req.body.username);
+    const userDetail = await validatorModel.checkValidator(req.body.username);
     if (userDetail) {
         res.send({ result: "username already exist" })
     }
@@ -64,7 +64,6 @@ login2 = async (clm) => {
         const query = new Moralis.Query(validatorDetail);
         query.equalTo("address", clm.address);
         let data = await query.find();
-        // console.log("ghjjk",data[0].attributes)
         if (data) {
             resolve(data[0]);
         } else {
@@ -149,12 +148,14 @@ exports.NFTforValidation = async function (req, res) {
         assetname: req.body.assetname
     }
     const NFTdetails = await validatorModel.NFTdetails(clm);
+    const validatorDetail = await validatorModel.validatorDetail(req.body.validatorwltaddress);
 
     let nftForValidation = Moralis.Object.extend("nftForValidation");
     let ForValidation = new nftForValidation();
 
     ForValidation.set("assetname", req.body.assetname);
     ForValidation.set("tokenid", req.body.tokenid);
+
     ForValidation.set("ownerusername", NFTdetails.attributes.ownerusername);
     ForValidation.set("ownername", NFTdetails.attributes.ownername);
     ForValidation.set("ownerwltaddress", NFTdetails.attributes.ownerwltaddress);
@@ -166,8 +167,9 @@ exports.NFTforValidation = async function (req, res) {
     ForValidation.set("city", detailsOfUser.attributes.city);
     ForValidation.set("homeaddress", detailsOfUser.attributes.homeaddress);
     ForValidation.set("estimatedvalue", NFTdetails.attributes.estimatedvalue);
-    ForValidation.set("validatornameforvld", req.body.validatornameforvld);
-    ForValidation.set("validatorusernameforvld", req.body.validatorusernameforvld);
+    ForValidation.set("validatorwltaddressforwld", req.body.validatorwltaddress);
+    ForValidation.set("validatornameforvld", validatorDetail.attributes.name);
+    ForValidation.set("validatorusernameforvld", validatorDetail.attributes.username);
     ForValidation.set("nftimage", NFTdetails.attributes.nftimage);
     ForValidation.set("nftimage1", NFTdetails.attributes.nftimage1);
     ForValidation.set("nftimage2", NFTdetails.attributes.nftimage2);
@@ -188,6 +190,9 @@ exports.NFTforValidation = async function (req, res) {
     let activityForValidation = new ValidationActivity();
     activityForValidation.set("assetname", req.body.assetname);
     activityForValidation.set("tokenid", req.body.tokenid);
+    activityForValidation.set("validatorwltaddress", req.body.validatorwltaddress);
+    activityForValidation.set("validatorname", validatorDetail.attributes.name);
+    activityForValidation.set("validatorusername", validatorDetail.attributes.username);
     activityForValidation.set("ownerusername", NFTdetails.attributes.ownerusername);
     activityForValidation.set("ownername", NFTdetails.attributes.ownername);
     activityForValidation.set("ownerwltaddress", NFTdetails.attributes.ownerwltaddress);

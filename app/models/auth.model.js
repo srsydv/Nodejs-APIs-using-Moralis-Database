@@ -42,10 +42,10 @@ const login_logs_schema = schema.login_logs_schemaex;
 const moment = require('moment');
 
 login3 = async (clm) => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         console.log("Hi3");
-        let data = await signupSchema.find({email:clm.email,password:clm.pass});
-        console.log("Hi4",data.length);
+        let data = await signupSchema.find({ email: clm.email, password: clm.pass });
+        console.log("Hi4", data.length);
         if (data) {
             resolve(data.length);
         } else {
@@ -55,7 +55,7 @@ login3 = async (clm) => {
 }
 
 UpdateLoginLogsAgain = async (clm) => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let data = new login_logs_schema({
             email: clm.email,
             hostname: clm.hostname,

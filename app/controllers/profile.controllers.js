@@ -247,27 +247,62 @@ exports.reqForSwapAsset = async (req, res) => {
     const userDetail = await profileModel.userDetailByAddress(user.address);
 
     const clm = {
-        toswaptokenid: req.body.toswaptokenid,
-        toswapassetname: req.body.toswapassetname
+        tokenid: req.body.toswaptokenid,
+        assetname: req.body.toswapassetname
     }
     const NFTdetails = await profileModel.NFTdetails(clm);
-
+    console.log("dddd",NFTdetails.attributes)
+    console.log("dddd",userDetail.attributes)
     let userActivity = Moralis.Object.extend("activityForUser");
     let reqForSwap = new userActivity();
     reqForSwap.set("assetname", req.body.assetname);
     reqForSwap.set("tokenid", req.body.tokenid);
     reqForSwap.set("toswapassetname", req.body.toswapassetname);
     reqForSwap.set("toswaptokenid", req.body.toswaptokenid);
-    reqForSwap.set("swaprequesttouserwltAddress", NFTdetails.attributes.ownerwltaddress);
-    reqForSwap.set("swaprequesttoname", NFTdetails.attributes.ownername);
-    reqForSwap.set("swaprequesttousername", NFTdetails.attributes.ownerusername);
+    //This address will also get notification for swap Request IN
+    reqForSwap.set("swaprequestuserwltAddress", NFTdetails.attributes.ownerwltaddress);
+    reqForSwap.set("swaprequestname", NFTdetails.attributes.ownername);
+    reqForSwap.set("swaprequestusername", NFTdetails.attributes.ownerusername);
     reqForSwap.set("username", userDetail.attributes.username);
     reqForSwap.set("name", userDetail.attributes.name);
     reqForSwap.set("userwltaddress", user.address);
-    reqForSwap.set("Message", "Swap Request");
+    // Here will be out sign for swap request
+    reqForSwap.set("Message", "Swap Request OUT");
     reqForSwap.set("DateAndTime", moment().format());
     await reqForSwap.save();
 
+    let getSwapReq = new userActivity();
+    getSwapReq.set("assetname", req.body.toswapassetname);
+    getSwapReq.set("tokenid", req.body.toswaptokenid);
+    getSwapReq.set("toswapassetname", req.body.assetname);
+    getSwapReq.set("toswaptokenid", req.body.tokenid);
+    getSwapReq.set("swaprequestuserwltAddress", user.address);
+    getSwapReq.set("swaprequestname", userDetail.attributes.name);
+    getSwapReq.set("swaprequestusername", userDetail.attributes.username);
+    getSwapReq.set("username", NFTdetails.attributes.ownerusername);
+    getSwapReq.set("name", NFTdetails.attributes.ownername);
+    getSwapReq.set("userwltaddress", NFTdetails.attributes.ownerwltaddress);
+    //Here will be in sign for swap request
+    getSwapReq.set("Message", "Swap Request IN");
+    getSwapReq.set("DateAndTime", moment().format());
+    await getSwapReq.save();
+
+
+
+    // let ValidationActivity = Moralis.Object.extend("activityForValidator");
+    // let activityForValidation = new ValidationActivity();
+    // activityForValidation.set("assetname", req.body.assetname);
+    // activityForValidation.set("tokenid", req.body.tokenid);
+    // activityForValidation.set("ownerusername", NFTdetails.attributes.ownerusername);
+    // activityForValidation.set("ownername", NFTdetails.attributes.ownername);
+    // activityForValidation.set("ownerwltaddress", NFTdetails.attributes.ownerwltaddress);
+    // activityForValidation.set("createrusername", NFTdetails.attributes.createrusername);
+    // activityForValidation.set("creatername", NFTdetails.attributes.creatername);
+    // activityForValidation.set("createrwltaddress", NFTdetails.attributes.createrwltaddress);
+    // activityForValidation.set("userWltAddress", user.address);
+    // activityForValidation.set("Message", "Validation Request");
+    // activityForValidation.set("DateAndTime", moment().format());
+    // await activityForValidation.save();
     // const reqForSwapToOtherUser = await profileModel.activityOfSwapToOtherUser(clm);
 
     const query = new Moralis.Query("nftprofiledetails");
@@ -290,8 +325,8 @@ exports.acceptSwapRequest = async (req, res) => {
     const userDetail = await profileModel.userDetailByAddress(user.address);
 
     const clm = {
-        toswaptokenid: req.body.toswaptokenid,
-        toswapassetname: req.body.toswapassetname
+        tokenid: req.body.toswaptokenid,
+        assetname: req.body.toswapassetname
     }
     const NFTdetails = await profileModel.NFTdetails(clm);
     let userActivity = Moralis.Object.extend("activityForUser");
@@ -335,4 +370,66 @@ exports.acceptSwapRequest = async (req, res) => {
     }
 
     res.send({ result: "Swapped Successfully" })
+}
+
+
+
+exports.burnNFT = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const userDetail = await profileModel.userDetailByAddress(user.address);
+
+    const clm = {
+        tokenid: req.body.tokenid,
+        assetname: req.body.assetname
+    }
+    const NFTdetails = await profileModel.NFTdetails(clm);
+    const validatorDetails = await profileModel.validatorDetails(req.body.validatorwltaddress);
+
+    let userActivity = Moralis.Object.extend("activityForUser");
+    let brunActivity = new userActivity();
+    brunActivity.set("assetname", req.body.assetname);
+    brunActivity.set("tokenid", req.body.tokenid);
+    //Asset NFT Reciever (Validator)
+    brunActivity.set("validatorname", validatorDetails.attributes.name);
+    brunActivity.set("validatorusername", validatorDetails.attributes.username);
+    brunActivity.set("validatorwltaddress", req.body.validatorwltaddress);
+    //Locked Money Reciever (You)
+    brunActivity.set("username", userDetail.attributes.username);
+    brunActivity.set("name", userDetail.attributes.name);
+    brunActivity.set("userwltaddress", user.address);
+    brunActivity.set("Message", "NFT burned");
+    brunActivity.set("DateAndTime", moment().format());
+    await brunActivity.save();
+
+    let ValidationActivity = Moralis.Object.extend("activityForValidator");
+    let activityForValidation = new ValidationActivity();
+    activityForValidation.set("assetname", req.body.assetname);
+    activityForValidation.set("tokenid", req.body.tokenid);
+    activityForValidation.set("validatorwltaddress", req.body.validatorwltaddress);
+    activityForValidation.set("validatorname", validatorDetails.attributes.name);
+    activityForValidation.set("validatorusername", validatorDetails.attributes.username);
+
+    //Because only owner can burn it so in owner clm user data will be storing
+    activityForValidation.set("ownerusername", userDetail.attributes.username);
+    activityForValidation.set("ownername", userDetail.attributes.name);
+    activityForValidation.set("ownerwltaddress", user.address);
+    activityForValidation.set("createrusername", NFTdetails.attributes.createrusername);
+    activityForValidation.set("creatername", NFTdetails.attributes.creatername);
+    activityForValidation.set("createrwltaddress", NFTdetails.attributes.createrwltaddress);
+    activityForValidation.set("userWltAddress", user.address);
+    activityForValidation.set("Message", "Burned");
+    activityForValidation.set("DateAndTime", moment().format());
+    await activityForValidation.save();
+
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
+    let NFTburnStatus = await query.first();
+    if (NFTburnStatus) {
+        NFTburnStatus.set("burnNFTstatus", "True");
+        await NFTburnStatus.save();
+    }
+    res.send({ result: "NFT Burned, Successfully" })
 }

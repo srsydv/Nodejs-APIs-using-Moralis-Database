@@ -105,16 +105,43 @@ assetname
 tokenid
 toswapassetname = name of the asset from which you want to change your asset
 toswaptokenid = tokenid of the asset from which you want to change your asset
-swaprequesttouserwltAddressss = wollet address of that NFT owner
+swaprequesttouserwltAddress = {
+        1.This address will also get notification for "swap Request IN"after swap request
+        2.This address will also get notification for "swap Request Accepted" after Accepting swap by that user 
+    }
 swaprequesttoname = name of that NFT owner
 swaprequesttousername = username of that NFT owner
 username = your username
-name = your name
+name = your name || Locked Money Reciever (You) in burn NFT
 userwltaddress = your wlt address
 Message = Message can be anything which will be the user activity
 {
     1.Swap Request
+        1.1 Swap Request (with IN sign)
+        1.2 Swap Request (with OUT sign)
     2.Swap Request Accepted
-    3.
+    3.Charged NFT
+    4.NFT burned
 }
+validatorwltaddress
+validatorname = Asset NFT Reciever (Validator) in burn NFT
+validatorusername
 DateAndTime = moment().format() for every activity
+
+
+6.#activityForValidator
+
+assetname
+tokenid
+validatorwltaddress
+validatorname
+validatorusername
+ownerusername = Because only owner can burn it so in owner clm user data will be storing
+ownername
+ownerwltaddress
+createrusername
+creatername
+createrwltaddress
+userWltAddress
+Message
+DateAndTime
