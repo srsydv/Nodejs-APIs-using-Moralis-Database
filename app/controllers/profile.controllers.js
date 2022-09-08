@@ -251,8 +251,6 @@ exports.reqForSwapAsset = async (req, res) => {
         assetname: req.body.toswapassetname
     }
     const NFTdetails = await profileModel.NFTdetails(clm);
-    console.log("dddd",NFTdetails.attributes)
-    console.log("dddd",userDetail.attributes)
     let userActivity = Moralis.Object.extend("activityForUser");
     let reqForSwap = new userActivity();
     reqForSwap.set("assetname", req.body.assetname);
