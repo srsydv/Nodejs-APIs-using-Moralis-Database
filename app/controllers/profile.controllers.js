@@ -343,6 +343,22 @@ exports.acceptSwapRequest = async (req, res) => {
     reqForSwap.set("DateAndTime", moment().format());
     await reqForSwap.save();
 
+    // let getSwapped = new userActivity();
+    // getSwapped.set("assetname", req.body.toswapassetname);
+    // getSwapped.set("tokenid", req.body.toswaptokenid);
+    // getSwapped.set("toswapassetname", req.body.assetname);
+    // getSwapped.set("toswaptokenid", req.body.tokenid);
+    // getSwapped.set("swaprequestuserwltAddress", user.address);
+    // getSwapped.set("swaprequestname", userDetail.attributes.name);
+    // getSwapped.set("swaprequestusername", userDetail.attributes.username);
+    // getSwapped.set("username", NFTdetails.attributes.ownerusername);
+    // getSwapped.set("name", NFTdetails.attributes.ownername);
+    // getSwapped.set("userwltaddress", NFTdetails.attributes.ownerwltaddress);
+    // //Here will be in sign for swap request
+    // getSwapped.set("Message", "Swap Request IN");
+    // getSwapped.set("DateAndTime", moment().format());
+    // await getSwapped.save();
+
     const query = new Moralis.Query("nftprofiledetails");
     query.equalTo("assetname", req.body.assetname);
     query.equalTo("tokenid", req.body.tokenid);
@@ -431,3 +447,60 @@ exports.burnNFT = async (req, res) => {
     }
     res.send({ result: "NFT Burned, Successfully" })
 }
+
+
+
+
+exports.transferNFT = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    
+    const clm = {
+        tokenid: req.body.tokenid,
+        assetname: req.body.assetname
+    }
+    const userDetail = await profileModel.userDetailByAddress(user.address);
+    const userDetailOfTransferedAdd = await profileModel.userDetailByAddress(req.body.nfttransferaddress);
+    const NFTdetails = await profileModel.NFTdetails(clm);
+    let userActivity = Moralis.Object.extend("activityForUser");
+    let transferNFTbyUser = new userActivity();
+    transferNFTbyUser.set("assetname", req.body.assetname);
+    transferNFTbyUser.set("tokenid", req.body.tokenid);
+    transferNFTbyUser.set("nfttransferaddress", req.body.nfttransferaddress);
+    transferNFTbyUser.set("nfttransferusername", userDetailOfTransferedAdd.attributes.username);
+    transferNFTbyUser.set("nfttransfername", userDetailOfTransferedAdd.attributes.name);
+    transferNFTbyUser.set("username", userDetail.attributes.username);
+    transferNFTbyUser.set("name", userDetail.attributes.name);
+    transferNFTbyUser.set("userwltaddress", user.address);
+    transferNFTbyUser.set("Message", "NFT Transfered");
+    transferNFTbyUser.set("DateAndTime", moment().format());
+    await transferNFTbyUser.save();
+
+    let getTransferedNFT = new userActivity();
+    getTransferedNFT.set("assetname", req.body.assetname);
+    getTransferedNFT.set("tokenid", req.body.tokenid);
+    getTransferedNFT.set("nfttransferaddress", user.address);
+    getTransferedNFT.set("nfttransferusername", userDetail.attributes.username);
+    getTransferedNFT.set("nfttransfername", userDetail.attributes.name);
+    getTransferedNFT.set("username", userDetailOfTransferedAdd.attributes.username);
+    getTransferedNFT.set("name", userDetailOfTransferedAdd.attributes.name);
+    getTransferedNFT.set("userwltaddress", req.body.nfttransferaddress);
+    getTransferedNFT.set("Message", "NFT Received");
+    getTransferedNFT.set("DateAndTime", moment().format());
+    await getTransferedNFT.save();
+
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
+    let changeOwnerNFT = await query.first();
+    if (changeOwnerNFT) {
+        changeOwnerNFT.set("ownerusername", userDetailOfTransferedAdd.attributes.username);
+        changeOwnerNFT.set("ownername", userDetailOfTransferedAdd.attributes.name)
+        changeOwnerNFT.set("ownerwltaddress", req.body.nfttransferaddress)
+        await changeOwnerNFT.save();
+    }
+
+    res.send({ result: "NFT Transfered, Successfully" })
+}
+

@@ -40,4 +40,7 @@ module.exports = app => {
 
     //Burn NFT
     app.post("/burnNFT",access_token.authenticateJWT, profileControler.burnNFT)
+
+    //Transfer NFT
+    app.post("/transferNFT",access_token.authenticateJWT, profileControler.transferNFT)
 }

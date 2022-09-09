@@ -45,7 +45,6 @@ userDetailByAddress = async (address) => {
 
 NFTdetails = async (clm) => {
     return new Promise(async (resolve, reject) => {
-        console.log("ffff", clm);
         let nftprofiledetails = Moralis.Object.extend("nftprofiledetails");
         const query = new Moralis.Query(nftprofiledetails);
         query.equalTo("tokenid", clm.tokenid);

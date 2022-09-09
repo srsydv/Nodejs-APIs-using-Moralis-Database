@@ -126,6 +126,9 @@ Message = Message can be anything which will be the user activity
 validatorwltaddress
 validatorname = Asset NFT Reciever (Validator) in burn NFT
 validatorusername
+nfttransferaddress = Where you are transfering thye NFT
+nfttransferusername = 
+nfttransfername
 DateAndTime = moment().format() for every activity
 
 
