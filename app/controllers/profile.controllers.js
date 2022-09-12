@@ -455,7 +455,7 @@ exports.transferNFT = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)
-    
+
     const clm = {
         tokenid: req.body.tokenid,
         assetname: req.body.assetname
