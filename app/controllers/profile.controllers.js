@@ -535,7 +535,6 @@ exports.AllActivities = async (req, res) => {
             if (req.body.sortby == "Oldest") {
                 query.ascending("DateAndTime");
             }
-
         }
 
     }
