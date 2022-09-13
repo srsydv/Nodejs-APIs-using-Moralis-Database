@@ -117,11 +117,13 @@ userwltaddress = your wlt address
 Message = Message can be anything which will be the user activity
 {
     1.Swap Request
-        1.1 Swap Request (with IN sign)
-        1.2 Swap Request (with OUT sign)
+        1.1 Swap Request IN (with IN sign)
+        1.2 Swap Request OUT (with OUT sign)
     2.Swap Request Accepted
     3.Charged NFT
     4.NFT burned
+    5.NFT Transfered
+    6.NFT Recieved
 }
 validatorwltaddress
 validatorname = Asset NFT Reciever (Validator) in burn NFT

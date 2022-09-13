@@ -504,3 +504,57 @@ exports.transferNFT = async (req, res) => {
     res.send({ result: "NFT Transfered, Successfully" })
 }
 
+
+exports.AllActivities = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const query = new Moralis.Query("activityForUser");
+    const query1 = new Moralis.Query("activityForUser");
+    const query2 = new Moralis.Query("activityForUser");
+    query.equalTo("userwltaddress", user.address);
+    const pageSize = 10;
+    const toSkip = ((req.body.page - 1) * pageSize);
+    let flag = 0;
+    if (req.body.activity === "Swap Requests") {
+        flag = 1;
+    }
+    console.log("hh", req.body.activity)
+    if (flag == 1) {
+        query.equalTo("Message", "Swap Request IN");
+        query1.equalTo("Message", "Swap Request OUT");
+        query2.equalTo("Message", "Swap Request Accepted");
+
+    }
+    else {
+        if (req.body.activity == "NFT Transfered" || req.body.activity == "NFT Received" || req.body.activity == "NFT burned" || req.body.activity == "Swap Request IN" || req.body.activity == "Swap Request OUT" || req.body.activity == "Swap Request Accepted") {
+            query.equalTo("Message", req.body.activity);
+            if (req.body.sortby == "Latest") {
+                query.descending("DateAndTime");
+            }
+            if (req.body.sortby == "Oldest") {
+                query.ascending("DateAndTime");
+            }
+
+        }
+
+    }
+    query.skip(toSkip);
+    query.limit(pageSize);
+    query1.skip(toSkip);
+    query1.limit(pageSize);
+    query2.skip(toSkip);
+    query2.limit(pageSize);
+    let data1 = await query.find();
+    let data2 = await query1.find();
+    let data3 = await query2.find();
+    if (flag == 1) {
+        const len = data1.length + data2.length + data3.length;
+        res.json({ data1, data2, data3 });
+        flag = 0;
+    }
+    else {
+        res.json(data1)
+    }
+
+}

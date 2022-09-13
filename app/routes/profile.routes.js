@@ -43,4 +43,7 @@ module.exports = app => {
 
     //Transfer NFT
     app.post("/transferNFT",access_token.authenticateJWT, profileControler.transferNFT)
+
+    //Pagination for activity
+    app.get("/AllActivities",access_token.authenticateJWT, profileControler.AllActivities);
 }
