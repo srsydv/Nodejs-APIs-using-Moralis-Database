@@ -102,9 +102,34 @@ exports.updateNFTDetail = async (req, res) => {
 }
 
 
-exports.ttlNFTsOfcustomer = async (req, res) => {
-    let data = await NFTprofileDetails.find({ owner: req.body.owner });
-    res.send(data);
+exports.myNFTs = async (req, res) => {
+    const query = new Moralis.Query("nftprofiledetails");
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
+    query.equalTo("createrwltaddress", user.address);
+    query.skip(toSkip);
+    query.limit(pageSize);
+    let data = await query.find();
+    res.json(data)
+}
+
+
+exports.myValidatedNFTs = async (req, res) => {
+    const query = new Moralis.Query("nftprofiledetails");
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
+    query.equalTo("ownerwltaddress", user.address);
+    query.equalTo("validationstate", "Validated");
+    query.skip(toSkip);
+    query.limit(pageSize);
+    let data = await query.find();
+    res.json(data)
 }
 
 exports.FavouriteNFTsofUser = async (req, res) => {
@@ -556,4 +581,35 @@ exports.AllActivities = async (req, res) => {
         res.json(data1)
     }
 
+}
+
+
+exports.userNFTs = async (req, res) => {
+    const query = new Moralis.Query("nftprofiledetails");
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
+    query.equalTo("createrwltaddress", req.body.useraddress);
+    query.skip(toSkip);
+    query.limit(pageSize);
+    let data = await query.find();
+    res.json(data)
+}
+
+
+exports.userValidatedNFTs = async (req, res) => {
+    const query = new Moralis.Query("nftprofiledetails");
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
+    query.equalTo("ownerwltaddress", req.body.useraddress);
+    query.equalTo("validationstate", "Validated");
+    query.skip(toSkip);
+    query.limit(pageSize);
+    let data = await query.find();
+    res.json(data)
 }

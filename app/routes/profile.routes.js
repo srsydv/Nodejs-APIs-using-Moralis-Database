@@ -11,8 +11,11 @@ module.exports = app => {
     //update NFT Detail
     app.post("/updateNFTDetail",access_token.authenticateJWT, profileControler.updateNFTDetail)
 
-    //Totle Assets(NFTs) of customer
-    app.get("/ttlNFTofcustomer",access_token.authenticateJWT, profileControler.ttlNFTsOfcustomer);
+    //All NFTs of single user for personal Dashboard
+    app.get("/myNFTs",access_token.authenticateJWT, profileControler.myNFTs);
+
+    //Validated NFT of a single user for personal Dashboard
+    app.get("/myValidatedNFTs",access_token.authenticateJWT, profileControler.myValidatedNFTs);
 
     //Marking of Favourite NFTs of user
     app.post("/FavouriteNFTsofUser",access_token.authenticateJWT, profileControler.FavouriteNFTsofUser)
@@ -44,6 +47,12 @@ module.exports = app => {
     //Transfer NFT
     app.post("/transferNFT",access_token.authenticateJWT, profileControler.transferNFT)
 
-    //Pagination for activity
+    //Pagination of Activity with filters for user
     app.get("/AllActivities",access_token.authenticateJWT, profileControler.AllActivities);
+
+    //All NFTs of single user for public Dashboard
+    app.get("/userNFTs",access_token.authenticateJWT, profileControler.userNFTs);
+
+    //Validated NFT of a single user for public Dashboard
+    app.get("/userValidatedNFTs",access_token.authenticateJWT, profileControler.userValidatedNFTs);
 }

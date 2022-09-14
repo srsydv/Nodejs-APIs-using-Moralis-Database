@@ -14,8 +14,11 @@ const favouriteNFTs = schema.favouriteNFTs
 
 
 exports.validatorsProfile = async (req, res) => {
-    let validatorDetail = Moralis.Object.extend("validatorDetail");
-    const query = new Moralis.Query(validatorDetail);
+    const query = new Moralis.Query("validatorDetail");
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
+    query.skip(toSkip);
+    query.limit(pageSize);
     let data = await query.find();
     res.json(data)
 }
@@ -167,7 +170,7 @@ exports.NFTforValidation = async function (req, res) {
     ForValidation.set("city", detailsOfUser.attributes.city);
     ForValidation.set("homeaddress", detailsOfUser.attributes.homeaddress);
     ForValidation.set("estimatedvalue", NFTdetails.attributes.estimatedvalue);
-    ForValidation.set("validatorwltaddressforwld", req.body.validatorwltaddress);
+    ForValidation.set("validatorwltaddressforvld", req.body.validatorwltaddress);
     ForValidation.set("validatornameforvld", validatorDetail.attributes.name);
     ForValidation.set("validatorusernameforvld", validatorDetail.attributes.username);
     ForValidation.set("nftimage", NFTdetails.attributes.nftimage);
@@ -309,12 +312,15 @@ exports.RequestforValidation = async (req, res) => {
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const validatorDetail = await validatorModel.validatorDetail(user.address);
 
-    let nftForValidation = Moralis.Object.extend("nftForValidation");
-    const query = new Moralis.Query(nftForValidation);
+    const query = new Moralis.Query("nftForValidation");
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
     query.equalTo("validatorusernameforvld", validatorDetail.attributes.username);
     query.equalTo("validationstate", "pending");
+    query.skip(toSkip);
+    query.limit(pageSize);
     let data = await query.find();
-    res.send(data);
+    res.json(data)
 
 }
 
@@ -325,12 +331,15 @@ exports.MyValidatedNFT = async (req, res) => {
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const validatorDetail = await validatorModel.validatorDetail(user.address);
-    let userDetail = Moralis.Object.extend("nftForValidation");
-    const query = new Moralis.Query(userDetail);
-    query.equalTo("validatorusernameforvld", validatorDetail.attributes.username);
+    const query = new Moralis.Query("nftForValidation");
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
     query.equalTo("validationstate", "Validated");
+    query.equalTo("validatorusername", validatorDetail.attributes.username);
+    query.skip(toSkip);
+    query.limit(pageSize);
     let data = await query.find();
-    res.send(data);
+    res.json(data)
 }
 
 exports.FavouriteNFTsofValidator = async (req, res) => {
@@ -389,4 +398,58 @@ exports.RemoveFromFvrt = async (req, res) => {
         await fvtnft.destroy();
         res.send({ result: "removed" })
     }
+}
+
+
+
+exports.AllActivitiesofValidator = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const query = new Moralis.Query("activityForValidator");
+    const query1 = new Moralis.Query("activityForValidator");
+    const query2 = new Moralis.Query("activityForValidator");
+    query.equalTo("validatorwltaddress", user.address);
+    const pageSize = 10;
+    const toSkip = ((req.body.page - 1) * pageSize);
+    let flag = 0;
+    if (req.body.activity === "Swap Requests") {
+        flag = 1;
+    }
+    if (flag == 1) {
+        query.equalTo("Message", "Swap Request IN");
+        query1.equalTo("Message", "Swap Request OUT");
+        query2.equalTo("Message", "Swap Request Accepted");
+
+    }
+    else {
+        if (req.body.activity == "Validation Request" || req.body.activity == "Validation Done" || req.body.activity == "Burned" || req.body.activity == "Swap Request IN" || req.body.activity == "Swap Request OUT" || req.body.activity == "Swap Request Accepted") {
+            query.equalTo("Message", req.body.activity);
+            if (req.body.sortby == "Latest") {
+                query.descending("DateAndTime");
+            }
+            if (req.body.sortby == "Oldest") {
+                query.ascending("DateAndTime");
+            }
+        }
+
+    }
+    query.skip(toSkip);
+    query.limit(pageSize);
+    query1.skip(toSkip);
+    query1.limit(pageSize);
+    query2.skip(toSkip);
+    query2.limit(pageSize);
+    let data1 = await query.find();
+    let data2 = await query1.find();
+    let data3 = await query2.find();
+    if (flag == 1) {
+        const len = data1.length + data2.length + data3.length;
+        res.json({ data1, data2, data3 });
+        flag = 0;
+    }
+    else {
+        res.json(data1)
+    }
+
 }

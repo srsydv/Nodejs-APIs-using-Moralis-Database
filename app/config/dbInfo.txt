@@ -64,11 +64,12 @@
 16.estimatedvalue = NFT estimated value by owner.
 17.validatornameforvld = Here will be the validator name the one owner is sending (1 NFT can be send to multiple validator).
 18.validatorusernameforvld = Here will be the validator username the one owner is sending.
-19.nftimage
-20.nftimage1
-21.nftimage2
-22.nftimage3
-23.sendforvalidationdate = moment().format() when the NFT is going to send for validation.
+19.validatorwltaddressforvld = Here will be the validator wollet address the one owner is sending.
+20.nftimage
+21.nftimage1
+22.nftimage2
+23.nftimage3
+24.sendforvalidationdate = moment().format() when the NFT is going to send for validation.
 
 3.#favouritenft
 
@@ -148,5 +149,15 @@ createrusername
 creatername
 createrwltaddress
 userWltAddress
-Message
+Message = Message can be anything which will be the user activity
+{
+    1.Swap Request
+        1.1 Swap Request IN (with IN sign)
+        1.2 Swap Request OUT (with OUT sign)
+    2.Swap Request Accepted
+    3.Charged NFT
+    4.NFT burned
+    5.NFT Transfered
+    6.NFT Recieved
+}
 DateAndTime
