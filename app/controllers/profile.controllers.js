@@ -86,6 +86,7 @@ exports.createNFT = async (req, res) => {
     newNft.set("nftcreationdate", moment().format());
     newNft.set("burnNFTstatus", "False");
     newNft.set("swapStatus", "Not Started");
+    newNft.set("sellstatus", "Not Started");
 
     let nft = await newNft.save();
     res.json(nft);

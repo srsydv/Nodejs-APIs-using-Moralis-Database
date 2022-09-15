@@ -39,6 +39,12 @@
     "pending" :=> if owner will send the NFT for swap then the swapStatus will be "Pending, Swapping Request with tokenId x".
     "swaped" :=> If req reciever accept the request It will be "Swapped with tokenId x"
 }
+30.sellstatus = It will be 1."pending", 2."Sold"
+{
+    "Not Started" :=> when the user will mint the NFT then the sellstatus state will be Not Started.
+    "Pending" :=> When he will list the NFT for Marketplace
+    "Sold" :=> When NFT will be sold
+}
 
 2.#nftForValidation
 

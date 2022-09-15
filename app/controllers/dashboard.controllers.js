@@ -37,8 +37,18 @@ exports.MarketPlaceNFTs = async (req, res) => {
         query.greaterThan("estimatedvalue", req.body.to);
         query.lessThan("estimatedvalue", req.body.from);
     }
-    if (req.body.blockchain) {
+    if (req.body.blockchain || req.body.assettype || req.body.sortby) {
         query.equalTo("blockchain", req.body.blockchain);
+        query.equalTo("typeofart", req.body.assettype);
+        if (req.body.sortby == "Low to High") {
+            query.ascending("estimatedvalue")
+        }
+        else if (req.body.sortby == "High to Low") {
+            query.descending("estimatedvalue")
+        }
+        else if (req.body.sortby == "Recent") {
+            query.descending("tokenid")
+        }
     }
     // query.ascending("tokenid");
     query.skip(toSkip);
