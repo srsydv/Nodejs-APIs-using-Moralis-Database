@@ -129,8 +129,17 @@ Message = Message can be anything which will be the user activity
     2.Swap Request Accepted
     3.Charged NFT
     4.NFT burned
+    {
+        ~ Asset NFT Reciever (Validator)
+        ~ Locked Money Reciever (You, Who is burning it)
+    }
     5.NFT Transfered
     6.NFT Recieved
+    7.Redeem NFT
+    {
+        ~ Locked Money Reciever (Validator)
+        ~ Asset NFT Reciever (You, Who is burning it)
+    }
 }
 validatorwltaddress
 validatorname = Asset NFT Reciever (Validator) in burn NFT
@@ -163,7 +172,21 @@ Message = Message can be anything which will be the user activity
     2.Swap Request Accepted
     3.Charged NFT
     4.NFT burned
+    {
+        ~ Asset NFT Reciever (Validator)
+        ~ Locked Money Reciever (Owner)
+        ~ And In nftprofiledetails collection we are putting validator in ownerwltaddress clm because after burning validator will be owner
+        ~ Because only owner can burn it so in owner clm user data will be storing
+        ~ In UI we can show "Burned by Address" insted of ownerwltaddress
+    }
     5.NFT Transfered
     6.NFT Recieved
+    7.Redeem NFT
+    {
+        ~ Locked Money Reciever (Validator)
+        ~ Asset NFT Reciever (Owner)
+        ~ Because only owner can burn it so in owner clm user data will be storing
+        ~ In UI we can show "Redeem by" insted of "ownerwltaddress"
+    }
 }
 DateAndTime

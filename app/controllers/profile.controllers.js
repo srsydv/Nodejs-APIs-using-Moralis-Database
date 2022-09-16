@@ -452,6 +452,7 @@ exports.burnNFT = async (req, res) => {
     activityForValidation.set("validatorusername", validatorDetails.attributes.username);
 
     //Because only owner can burn it so in owner clm user data will be storing
+    //In UI we "Burned by Address" insted of ownerwltaddress
     activityForValidation.set("ownerusername", userDetail.attributes.username);
     activityForValidation.set("ownername", userDetail.attributes.name);
     activityForValidation.set("ownerwltaddress", user.address);
@@ -469,6 +470,9 @@ exports.burnNFT = async (req, res) => {
     let NFTburnStatus = await query.first();
     if (NFTburnStatus) {
         NFTburnStatus.set("burnNFTstatus", "True");
+        NFTburnStatus.set("ownerwltaddress", req.body.validatorwltaddress);
+        NFTburnStatus.set("ownerusername", validatorDetails.attributes.username);
+        NFTburnStatus.set("ownername", validatorDetails.attributes.name);
         await NFTburnStatus.save();
     }
     res.send({ result: "NFT Burned, Successfully" })
@@ -613,4 +617,66 @@ exports.userValidatedNFTs = async (req, res) => {
     query.limit(pageSize);
     let data = await query.find();
     res.json(data)
+}
+
+
+exports.redeemNFT = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const userDetail = await profileModel.userDetailByAddress(user.address);
+
+    const clm = {
+        tokenid: req.body.tokenid,
+        assetname: req.body.assetname
+    }
+    const NFTdetails = await profileModel.NFTdetails(clm);
+    const validatorDetails = await profileModel.validatorDetails(req.body.validatorwltaddress);
+
+    let userActivity = Moralis.Object.extend("activityForUser");
+    let brunActivity = new userActivity();
+    brunActivity.set("assetname", req.body.assetname);
+    brunActivity.set("tokenid", req.body.tokenid);
+    //Locked Money Reciever (Validator)
+    brunActivity.set("validatorname", validatorDetails.attributes.name);
+    brunActivity.set("validatorusername", validatorDetails.attributes.username);
+    brunActivity.set("validatorwltaddress", req.body.validatorwltaddress);
+    //Asset NFT Reciever (You)
+    brunActivity.set("username", userDetail.attributes.username);
+    brunActivity.set("name", userDetail.attributes.name);
+    brunActivity.set("userwltaddress", user.address);
+    brunActivity.set("Message", "Redeem NFT");
+    brunActivity.set("DateAndTime", moment().format());
+    await brunActivity.save();
+
+    let ValidationActivity = Moralis.Object.extend("activityForValidator");
+    let activityForValidation = new ValidationActivity();
+    activityForValidation.set("assetname", req.body.assetname);
+    activityForValidation.set("tokenid", req.body.tokenid);
+    activityForValidation.set("validatorwltaddress", req.body.validatorwltaddress);
+    activityForValidation.set("validatorname", validatorDetails.attributes.name);
+    activityForValidation.set("validatorusername", validatorDetails.attributes.username);
+
+    //Because only owner can burn it so in owner clm user data will be storing
+    //In UI we can show "Redeem by" insted of "ownerwltaddress"
+    activityForValidation.set("ownerusername", userDetail.attributes.username);
+    activityForValidation.set("ownername", userDetail.attributes.name);
+    activityForValidation.set("ownerwltaddress", user.address);
+    activityForValidation.set("createrusername", NFTdetails.attributes.createrusername);
+    activityForValidation.set("creatername", NFTdetails.attributes.creatername);
+    activityForValidation.set("createrwltaddress", NFTdetails.attributes.createrwltaddress);
+    activityForValidation.set("userWltAddress", user.address);
+    activityForValidation.set("Message", "Redeem NFT");
+    activityForValidation.set("DateAndTime", moment().format());
+    await activityForValidation.save();
+
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
+    let NFTburnStatus = await query.first();
+    if (NFTburnStatus) {
+        NFTburnStatus.set("burnNFTstatus", "True");
+        await NFTburnStatus.save();
+    }
+    res.send({ result: "NFT Redeem, Successfully" })
 }
