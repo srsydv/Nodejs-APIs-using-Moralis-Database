@@ -56,6 +56,9 @@ module.exports = app => {
     //All NFTs of single user for public Dashboard
     app.get("/userNFTs",access_token.authenticateJWT, profileControler.userNFTs);
 
+    //All created NFTs of single user for public Dashboard
+    app.get("/userCreatedNFTs",access_token.authenticateJWT, profileControler.userCreatedNFTs);
+
     //Validated NFT of a single user for public Dashboard
     app.get("/userValidatedNFTs",access_token.authenticateJWT, profileControler.userValidatedNFTs);
 }

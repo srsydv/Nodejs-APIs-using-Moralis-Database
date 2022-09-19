@@ -596,6 +596,21 @@ exports.userNFTs = async (req, res) => {
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const pageSize = 30;
     const toSkip = ((req.body.page - 1) * pageSize);
+    query.equalTo("ownerwltaddress", req.body.useraddress);
+    query.skip(toSkip);
+    query.limit(pageSize);
+    let data = await query.find();
+    res.json(data)
+}
+
+
+exports.userCreatedNFTs = async (req, res) => {
+    const query = new Moralis.Query("nftprofiledetails");
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
     query.equalTo("createrwltaddress", req.body.useraddress);
     query.skip(toSkip);
     query.limit(pageSize);
