@@ -12,8 +12,8 @@ const app = express();
 global.__basedir = __dirname;
 
 // parse requests of content-type - application/json
-app.use(bodyParser.json());
-
+// app.use(bodyParser.json());
+app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -48,7 +48,7 @@ require("./app/routes/dashboard.routes.js")(app);
 
 
 const PORT = process.env.PORT ||4000;
-app.listen(PORT , async() => {
+app.listen(3000 , async() => {
   console.log(`Server is running on 3000 port `);
   await Moralis.start({
     serverUrl: `https://pgx0oftxah1q.usemoralis.com:2053/server`,
