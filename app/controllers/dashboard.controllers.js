@@ -35,7 +35,6 @@ exports.SearchNFTbyname = async (req, res) => {
 
 exports.NFTdetail = async (req, res) => {
     const query = new Moralis.Query("nftprofiledetails");
-    query.equalTo("assetname", req.body.assetname);
     query.equalTo("tokenid", req.body.tokenid);
     let data = await query.find();
     res.json(data)
