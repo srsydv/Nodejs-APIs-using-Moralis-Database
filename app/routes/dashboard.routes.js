@@ -8,6 +8,9 @@ module.exports = app => {
     //Search NFT by name
     app.get("/SearchNFTbyname",access_token.authenticateJWT, dashboard.SearchNFTbyname);
 
+    //NFT Detail
+    app.get("/NFTdetail",access_token.authenticateJWT, dashboard.NFTdetail);
+
     //Pagiantion of NFT for MarketPlace
     app.get("/MarketPlaceNFTs", dashboard.MarketPlaceNFTs);
 }

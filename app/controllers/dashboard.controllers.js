@@ -23,7 +23,20 @@ exports.PriceRange = async (req, res) => {
 
 exports.SearchNFTbyname = async (req, res) => {
     const query = new Moralis.Query("nftprofiledetails");
+    const pageSize = 30;
+    const toSkip = ((req.body.page - 1) * pageSize);
     query.equalTo("assetname", req.body.assetname);
+    query.skip(toSkip);
+    query.limit(pageSize);
+    let data = await query.find();
+    res.json(data)
+
+}
+
+exports.NFTdetail = async (req, res) => {
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
     let data = await query.find();
     res.json(data)
 
