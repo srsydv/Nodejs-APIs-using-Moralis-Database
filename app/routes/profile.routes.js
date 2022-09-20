@@ -32,6 +32,9 @@ module.exports = app => {
     //Sell Your NFT for MarketPlace
     app.put("/sellNFTforMP",access_token.authenticateJWT, profileControler.sellNFTforMP)
 
+    //On Sale NFTs of single user
+    app.get("/onSaleNFTs", profileControler.onSaleNFTs);
+
     //Buy NFT by User
     app.put("/buyNFT",access_token.authenticateJWT, profileControler.buyNFT)
 

@@ -222,10 +222,34 @@ exports.sellNFTforMP = async (req, res) => {
     if (sellOnMP) {
         sellOnMP.set("onselldate", moment().format());
         sellOnMP.set("sellstatus", "Pending");
+        sellOnMP.set("mptype", req.body.mptype);
+        sellOnMP.set("mpprice", req.body.mpprice);
+        sellOnMP.set("mpduration", req.body.mpduration);
+        sellOnMP.set("mpsupply", req.body.mpsupply);
+        sellOnMP.set("mpsetasbundle", req.body.mpsetasbundle);
+        sellOnMP.set("mpreserveforspecificbuyer", req.body.mpreserveforspecificbuyer);
+        sellOnMP.set("mpfees", req.body.mpfees);
         await sellOnMP.save();
 
         res.send({ result: sellOnMP })
     }
+}
+
+
+exports.onSaleNFTs = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const pageSize = 30;
+    const toSkip = ((req.query.page - 1) * pageSize);
+    const userDetail = await profileModel.userDetailByAddress(user.address);
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("ownerwltaddress", user.address);
+    query.skip(toSkip);
+    query.limit(pageSize);
+    let data = await query.find();
+    res.json(data)
+
 }
 
 
