@@ -111,7 +111,7 @@ exports.myNFTs = async (req, res) => {
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const pageSize = 30;
     const toSkip = ((req.body.page - 1) * pageSize);
-    query.equalTo("createrwltaddress", user.address);
+    query.equalTo("createrwltaddress", req.query.useraddress);
     query.skip(toSkip);
     query.limit(pageSize);
     let data = await query.find();
