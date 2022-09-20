@@ -411,9 +411,9 @@ exports.AllActivitiesofValidator = async (req, res) => {
     const query2 = new Moralis.Query("activityForValidator");
     query.equalTo("validatorwltaddress", user.address);
     const pageSize = 10;
-    const toSkip = ((req.body.page - 1) * pageSize);
+    const toSkip = ((req.query.page - 1) * pageSize);
     let flag = 0;
-    if (req.body.activity === "Swap Requests") {
+    if (req.query.activity === "Swap Requests") {
         flag = 1;
     }
     if (flag == 1) {
@@ -423,12 +423,12 @@ exports.AllActivitiesofValidator = async (req, res) => {
 
     }
     else {
-        if (req.body.activity == "Validation Request" || req.body.activity == "Validation Done" || req.body.activity == "Burned" || req.body.activity == "Swap Request IN" || req.body.activity == "Swap Request OUT" || req.body.activity == "Swap Request Accepted") {
-            query.equalTo("Message", req.body.activity);
-            if (req.body.sortby == "Latest") {
+        if (req.query.activity == "Validation Request" || req.query.activity == "Validation Done" || req.query.activity == "Burned" || req.query.activity == "Swap Request IN" || req.query.activity == "Swap Request OUT" || req.query.activity == "Swap Request Accepted") {
+            query.equalTo("Message", req.query.activity);
+            if (req.query.sortby == "Latest") {
                 query.descending("DateAndTime");
             }
-            if (req.body.sortby == "Oldest") {
+            if (req.query.sortby == "Oldest") {
                 query.ascending("DateAndTime");
             }
         }

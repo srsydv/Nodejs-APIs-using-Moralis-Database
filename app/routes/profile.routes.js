@@ -50,7 +50,7 @@ module.exports = app => {
     //Transfer NFT
     app.post("/transferNFT",access_token.authenticateJWT, profileControler.transferNFT)
 
-    //Pagination of Activity with filters for user
+    //Activity for user
     app.get("/AllActivities",access_token.authenticateJWT, profileControler.AllActivities);
 
     //All NFTs of single user for public Dashboard

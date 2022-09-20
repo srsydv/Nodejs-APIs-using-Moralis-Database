@@ -38,7 +38,7 @@ module.exports = app => {
     //Remove NFT from favourite list of Validator
     app.delete("/RemoveFromFvrt",access_token.authenticateJWT, validatorControler.RemoveFromFvrt)
 
-    // Pagination of Activity with filters for Validator
+    //Activity for Validator
     app.get("/AllActivitiesofValidator",access_token.authenticateJWT, validatorControler.AllActivitiesofValidator);
 
 }

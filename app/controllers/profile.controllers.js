@@ -540,42 +540,41 @@ exports.AllActivities = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)
-    const query = new Moralis.Query("activityForUser");
+    const query3 = new Moralis.Query("activityForUser");
     const query1 = new Moralis.Query("activityForUser");
     const query2 = new Moralis.Query("activityForUser");
-    query.equalTo("userwltaddress", user.address);
+    query3.equalTo("userwltaddress", user.address);
     const pageSize = 10;
-    const toSkip = ((req.body.page - 1) * pageSize);
+    const toSkip = ((req.query.page - 1) * pageSize);
     let flag = 0;
-    if (req.body.activity === "Swap Requests") {
+    if (req.query.activity === "Swap Requests") {
         flag = 1;
     }
-    console.log("hh", req.body.activity)
     if (flag == 1) {
-        query.equalTo("Message", "Swap Request IN");
+        query3.equalTo("Message", "Swap Request IN");
         query1.equalTo("Message", "Swap Request OUT");
         query2.equalTo("Message", "Swap Request Accepted");
 
     }
     else {
-        if (req.body.activity == "NFT Transfered" || req.body.activity == "NFT Received" || req.body.activity == "NFT burned" || req.body.activity == "Swap Request IN" || req.body.activity == "Swap Request OUT" || req.body.activity == "Swap Request Accepted") {
-            query.equalTo("Message", req.body.activity);
-            if (req.body.sortby == "Latest") {
-                query.descending("DateAndTime");
+        if (req.query.activity == "NFT Transfered" || req.query.activity == "NFT Received" || req.query.activity == "NFT burned" || req.query.activity == "Swap Request IN" || req.query.activity == "Swap Request OUT" || req.query.activity == "Swap Request Accepted") {
+            query3.equalTo("Message", req.query.activity);
+            if (req.query.sortby == "Latest") {
+                query3.descending("DateAndTime");
             }
-            if (req.body.sortby == "Oldest") {
-                query.ascending("DateAndTime");
+            if (req.query.sortby == "Oldest") {
+                query3.ascending("DateAndTime");
             }
         }
 
     }
-    query.skip(toSkip);
-    query.limit(pageSize);
+    query3.skip(toSkip);
+    query3.limit(pageSize);
     query1.skip(toSkip);
     query1.limit(pageSize);
     query2.skip(toSkip);
     query2.limit(pageSize);
-    let data1 = await query.find();
+    let data1 = await query3.find();
     let data2 = await query1.find();
     let data3 = await query2.find();
     if (flag == 1) {
@@ -627,7 +626,7 @@ exports.userValidatedNFTs = async (req, res) => {
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const pageSize = 30;
     const toSkip = ((req.body.page - 1) * pageSize);
-    query.equalTo("ownerwltaddress", req.body.useraddress);
+    query.equalTo("ownerwltaddress", req.query.useraddress);
     query.equalTo("validationstate", "Validated");
     query.skip(toSkip);
     query.limit(pageSize);
