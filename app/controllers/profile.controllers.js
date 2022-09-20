@@ -82,12 +82,12 @@ exports.createNFT = async (req, res) => {
     newNft.set("nftimage2", req.body.nftimage2);
     newNft.set("nftimage3", req.body.nftimage3);
     newNft.set("blockchain", req.body.blockchain);
+    newNft.set("ipfsmetadataurl", req.body.ipfsmetadataurl);
     newNft.set("validationstate", "Not Started");
     newNft.set("nftcreationdate", moment().format());
     newNft.set("burnNFTstatus", "False");
     newNft.set("swapStatus", "Not Started");
     newNft.set("sellstatus", "Not Started");
-    newNft.set("ipfsmetadataurl", req.body.ipfsmetadataurl);
 
     let nft = await newNft.save();
     res.json(nft);
