@@ -44,21 +44,21 @@ exports.NFTdetail = async (req, res) => {
 exports.MarketPlaceNFTs = async (req, res) => {
     const query = new Moralis.Query("nftprofiledetails");
     const pageSize = 30;
-    const toSkip = ((req.body.page - 1) * pageSize);
-    if (req.body.to && req.body.from) {
-        query.greaterThan("estimatedvalue", req.body.to);
-        query.lessThan("estimatedvalue", req.body.from);
+    const toSkip = ((req.query.page - 1) * pageSize);
+    if (req.query.to && req.query.from) {
+        query.greaterThan("estimatedvalue", req.query.to);
+        query.lessThan("estimatedvalue", req.query.from);
     }
-    if (req.body.blockchain || req.body.assettype || req.body.sortby) {
-        query.equalTo("blockchain", req.body.blockchain);
-        query.equalTo("typeofart", req.body.assettype);
-        if (req.body.sortby == "Low to High") {
+    if (req.query.blockchain || req.query.assettype || req.query.sortby) {
+        query.equalTo("blockchain", req.query.blockchain);
+        query.equalTo("typeofart", req.query.assettype);
+        if (req.query.sortby == "Low to High") {
             query.ascending("estimatedvalue")
         }
-        else if (req.body.sortby == "High to Low") {
+        else if (req.query.sortby == "High to Low") {
             query.descending("estimatedvalue")
         }
-        else if (req.body.sortby == "Recent") {
+        else if (req.query.sortby == "Recent") {
             query.descending("tokenid")
         }
     }

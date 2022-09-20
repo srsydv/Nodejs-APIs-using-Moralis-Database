@@ -12,5 +12,5 @@ module.exports = app => {
     app.get("/NFTdetail",access_token.authenticateJWT, dashboard.NFTdetail);
 
     //Pagiantion of NFT for MarketPlace
-    app.get("/MarketPlaceNFTs",access_token.authenticateJWT, dashboard.MarketPlaceNFTs);
+    app.get("/MarketPlaceNFTs", dashboard.MarketPlaceNFTs);
 }
