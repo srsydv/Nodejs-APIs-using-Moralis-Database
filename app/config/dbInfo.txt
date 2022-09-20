@@ -46,6 +46,17 @@
     "Sold" :=> When NFT will be sold
 }
 31.ipfsmetadataurl = It will send NFT IPFS metadata
+32.mptype = This is marketplace type it will be two types
+{
+    1.Fixed Price
+    2.Timed Auction
+} 
+33.mpprice = Marketplace price
+34.mpduration = marketplace duration
+35.mpsupply = marketplace supply
+36.mpsetasbundle = Marketplace set as bundle
+37.mpreserveforspecificbuyer = Marketplace reserve for specific buyer
+38.mpfees = Marketplace fees
 
 2.#nftForValidation
 
