@@ -45,6 +45,7 @@
     "Pending" :=> When he will list the NFT for Marketplace
     "Sold" :=> When NFT will be sold
 }
+31.ipfsmetadataurl = It will send NFT IPFS metadata
 
 2.#nftForValidation
 
