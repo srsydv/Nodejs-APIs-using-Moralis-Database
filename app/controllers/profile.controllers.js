@@ -56,7 +56,7 @@ exports.createNFT = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)
-    const createrDetail = await profileModel.userDetailByAddress(user.address)
+    const createrDetail = await profileModel.userDetailByAddress((user.address))
 
     let nftprofiledetails = Moralis.Object.extend("nftprofiledetails");
     let newNft = new nftprofiledetails();
@@ -209,7 +209,7 @@ exports.SearchNFTbyname = async (req, res) => {
 
 }
 
-exports.sellNFTforMP = async (req, res) => {
+exports.listNFTforMP = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)

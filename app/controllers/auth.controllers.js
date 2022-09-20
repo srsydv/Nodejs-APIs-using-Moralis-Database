@@ -51,7 +51,7 @@ const login2 = async (clm) => {
     return new Promise(async (resolve, reject) => {
         let userDetail = Moralis.Object.extend("userDetail");
         const query = new Moralis.Query(userDetail);
-        query.equalTo("address", clm.address);
+        query.equalTo("address", (clm.address).toLowerCase());
         let data = await query.find();
         // console.log("ghjjk",data[0].attributes)
         if (data) {
@@ -66,7 +66,7 @@ const login2 = async (clm) => {
 const UpdateLoginLogs = async (clm) => {
     return new Promise(async (resolve, reject) => {
         let data = new login_logs_schema({
-            address: clm.address,
+            address: (clm.address).toLowerCase(),
             hostname: clm.hostname,
             IP: clm.ip,
             lastRequestAt: clm.lastRequestAt,
@@ -89,7 +89,7 @@ const insertAdd = async (clm) => {
         adduser.set("astRequestAt", clm.astRequestAt);
         adduser.set("lastLogin", moment().format());
         adduser.set("sessionID", clm.sessionID);
-        adduser.set("username", clm.address)
+        adduser.set("username", (clm.address).toLowerCase())
 
         adduser.set("name", "");
         adduser.set("username", "");
@@ -113,10 +113,10 @@ const insertAdd = async (clm) => {
 
 exports.Authlogin = async function (req, res) {
     const clm = {
-        address: req.body.address
+        address: (req.body.address).toLowerCase()
     }
     const authuser1 = {
-        address: req.body.address,
+        address: (req.body.address).toLowerCase(),
         hostname: "",
         ip: "",
         sessionID: req.session.id,

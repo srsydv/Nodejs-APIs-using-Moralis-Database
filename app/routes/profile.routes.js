@@ -29,8 +29,8 @@ module.exports = app => {
     //Search NFT by name
     app.get("/SearchNFTbyname1",access_token.authenticateJWT, profileControler.SearchNFTbyname);
 
-    //Sell Your NFT for MarketPlace
-    app.put("/sellNFTforMP",access_token.authenticateJWT, profileControler.sellNFTforMP)
+    //List Your NFT for MarketPlace
+    app.put("/listNFTforMP",access_token.authenticateJWT, profileControler.listNFTforMP)
 
     //On Sale NFTs of single user
     app.get("/onSaleNFTs", profileControler.onSaleNFTs);
