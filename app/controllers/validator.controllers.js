@@ -65,7 +65,7 @@ login2 = async (clm) => {
     return new Promise(async (resolve, reject) => {
         let validatorDetail = Moralis.Object.extend("validatorDetail");
         const query = new Moralis.Query(validatorDetail);
-        query.equalTo("address", clm.address);
+        query.equalTo("address", (clm.address).toLowerCase());
         let data = await query.find();
         if (data) {
             resolve(data[0]);
@@ -85,7 +85,7 @@ insertAdd = async (clm) => {
         addValidator.set("astRequestAt", clm.astRequestAt);
         addValidator.set("lastLogin", moment().format());
         addValidator.set("sessionID", clm.sessionID);
-        addValidator.set("username", clm.address)
+        addValidator.set("username", (clm.address).toLowerCase())
 
         addValidator.set("name", "");
         addValidator.set("username", "");
@@ -109,10 +109,10 @@ insertAdd = async (clm) => {
 
 exports.validatorlogin = async function (req, res) {
     const clm = {
-        address: req.body.address
+        address: (req.body.address).toLowerCase()
     }
     const authuser1 = {
-        address: req.body.address,
+        address: (req.body.address).toLowerCase(),
         hostname: "",
         ip: "",
         sessionID: req.session.id,
@@ -124,7 +124,7 @@ exports.validatorlogin = async function (req, res) {
     }
     const data = await login2(clm);
     const access_token = jwt.sign({
-        address: data.attributes.address
+        address: (data.attributes.address).toLowerCase()
     },
         process.env.JWT_SECRET, {
         expiresIn: "5d"
@@ -452,4 +452,33 @@ exports.AllActivitiesofValidator = async (req, res) => {
         res.json(data1)
     }
 
+}
+
+
+
+exports.validationRequestForSingleNFT = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const validatorDetail = await validatorModel.validatorDetail(user.address);
+    const query = new Moralis.Query("nftForValidation");
+    const pageSize = 30;
+    const toSkip = ((req.query.page - 1) * pageSize);
+    query.equalTo("tokenid", req.query.tokenid);
+    query.equalTo("validatorwltaddressforvld", user.address);
+    query.skip(toSkip);
+    query.limit(pageSize);
+    let data = await query.find();
+    if(data.length>0){
+        res.send({
+            message: 'Request Found',
+            data: data
+        })
+    }
+    else{
+        res.send({
+            message: 'No Request Found'
+        })
+    }
+    
 }

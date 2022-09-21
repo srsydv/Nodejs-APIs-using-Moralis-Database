@@ -48,7 +48,7 @@ require("./app/routes/dashboard.routes.js")(app);
 
 
 const PORT = process.env.PORT ||4000;
-app.listen(4000 , async() => {
+app.listen(PORT , async() => {
   console.log(`Server is running on 4000 port `);
   await Moralis.start({
     serverUrl: `https://pgx0oftxah1q.usemoralis.com:2053/server`,

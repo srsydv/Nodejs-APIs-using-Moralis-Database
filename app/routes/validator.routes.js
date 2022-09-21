@@ -41,4 +41,7 @@ module.exports = app => {
     //Activity for Validator
     app.get("/AllActivitiesofValidator",access_token.authenticateJWT, validatorControler.AllActivitiesofValidator);
 
+    //Check validation request for single NFT
+    app.get("/validationRequestForSingleNFT",access_token.authenticateJWT, validatorControler.validationRequestForSingleNFT);
+
 }
