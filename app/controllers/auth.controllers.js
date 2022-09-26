@@ -63,6 +63,22 @@ const login2 = async (clm) => {
 }
 
 
+const validatorLogin = async (clm) => {
+    return new Promise(async (resolve, reject) => {
+        let userDetail = Moralis.Object.extend("validatorDetail");
+        const query = new Moralis.Query(userDetail);
+        query.equalTo("address", (clm.address).toLowerCase());
+        let data = await query.find();
+        // console.log("ghjjk",data[0].attributes)
+        if (data) {
+            resolve(data[0]);
+        } else {
+            reject("Error");
+        }
+    })
+}
+
+
 const UpdateLoginLogs = async (clm) => {
     return new Promise(async (resolve, reject) => {
         let data = new login_logs_schema({
@@ -122,24 +138,35 @@ exports.Authlogin = async function (req, res) {
         sessionID: req.session.id,
         lastRequestAt: req.session._lastRequestAt
     };
-    const data1 = await login2(clm);
-    if (!data1) {
-        const insAdd = await insertAdd(authuser1);
+    const validatordata = await validatorLogin(clm);
+    if (validatordata) {
+        res.send(
+            {
+                message: "Validator"
+            }
+        );
     }
-    const data = await login2(clm);
-    const access_token = jwt.sign({
-        address: data.attributes.address
-    },
-        process.env.JWT_SECRET, {
-        expiresIn: "5d"
-    });
+    else {
+        const data1 = await login2(clm);
+        if (!data1) {
+            const insAdd = await insertAdd(authuser1);
+        }
+        const data = await login2(clm);
+        const access_token = jwt.sign({
+            address: data.attributes.address
+        },
+            process.env.JWT_SECRET, {
+            expiresIn: "5d"
+        });
 
-    let useralldata = data.attributes;
-    data.attributes.password = "NahiBataunga";
+        let useralldata = data.attributes;
+        data.attributes.password = "NahiBataunga";
 
-    res.send({
-        message: 'Authorized User',
-        accessToken: access_token,
-        user: useralldata
-    })
+        res.send({
+            message: 'Authorized User',
+            accessToken: access_token,
+            user: useralldata
+        })
+    }
+
 };

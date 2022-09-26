@@ -5,6 +5,9 @@ module.exports = app => {
     //validator login
     app.post("/validatorlogin", validatorControler.validatorlogin);
 
+    //validator login as User
+    app.post("/validatorloginAsUser", validatorControler.validatorloginAsUser);
+
     //Validator Edit Profile
     app.put("/EditvalidatorProfile",access_token.authenticateJWT, validatorControler.validatorEditProfile);
 
