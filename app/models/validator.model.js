@@ -36,8 +36,7 @@ NFTdetails = async (clm) => {
 
 validatorDetail = async (address) => {
     return new Promise(async (resolve, reject) => {
-        let validatorDetail = Moralis.Object.extend("validatorDetail");
-        const query = new Moralis.Query(validatorDetail);
+        const query = new Moralis.Query("validatorDetail");
         query.equalTo("address", address);
         let data = await query.find();
         if (data) {
