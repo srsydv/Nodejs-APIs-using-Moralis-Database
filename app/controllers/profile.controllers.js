@@ -636,6 +636,7 @@ exports.userCreatedNFTs = async (req, res) => {
     const pageSize = 30;
     const toSkip = ((req.query.page - 1) * pageSize);
     query.equalTo("createrwltaddress", req.query.useraddress);
+    query.notEqualTo("validationstate", "Validated");
     query.skip(toSkip);
     query.limit(pageSize);
     let data = await query.find();

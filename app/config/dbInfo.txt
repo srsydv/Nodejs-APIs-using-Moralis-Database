@@ -71,6 +71,7 @@
 9.address = wlt address who is sending the NFT for Validation, means owner wlt address.
 10.validationstate = It will be 1."pending", 2."Validated"
 {
+    "Not Started" :=> when user will create NFT
     "pending" :=> It will be pending autometically after sending any NFT for validation.
     "Validated" :=> If Any Validator validated any NFT then the validationstate will be validated.
 }
