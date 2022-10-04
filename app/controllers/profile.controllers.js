@@ -88,6 +88,7 @@ exports.createNFT = async (req, res) => {
     newNft.set("burnNFTstatus", "False");
     newNft.set("swapStatus", "Not Started");
     newNft.set("sellstatus", "Not Started");
+    newNft.set("redeemNFTrequest", "False");
 
     let nft = await newNft.save();
     res.json(nft);
@@ -659,6 +660,52 @@ exports.userValidatedNFTs = async (req, res) => {
     res.json(data)
 }
 
+exports.sendredeemreq = async (req, res) => {
+    const query = new Moralis.Query("nftprofiledetails");
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const validatorDetails = await profileModel.validatorDetails(req.body.validatorwltaddress);
+    const userDetail = await profileModel.userDetailByAddress(user.address);
+
+    const clm = {
+        tokenid: req.body.tokenid
+    }
+    const NFTdetails = await profileModel.NFTdetailByTokenid(clm);
+    let ValidationActivity = Moralis.Object.extend("activityForValidator");
+    let activityForValidation = new ValidationActivity();
+    activityForValidation.set("assetname", req.body.assetname);
+    activityForValidation.set("tokenid", req.body.tokenid);
+    activityForValidation.set("validatorwltaddress", req.body.validatorwltaddress);
+    activityForValidation.set("validatorname", validatorDetails.attributes.name);
+    activityForValidation.set("validatorusername", validatorDetails.attributes.username);
+
+    //Because only owner can send request so in owner clm user data will be storing
+    //In UI we can show "Redeem request by" insted of "ownerwltaddress"
+    activityForValidation.set("ownerusername", userDetail.attributes.username);
+    activityForValidation.set("ownername", userDetail.attributes.name);
+    activityForValidation.set("ownerwltaddress", user.address);
+    activityForValidation.set("createrusername", NFTdetails.attributes.createrusername);
+    activityForValidation.set("creatername", NFTdetails.attributes.creatername);
+    activityForValidation.set("createrwltaddress", NFTdetails.attributes.createrwltaddress);
+    activityForValidation.set("userWltAddress", user.address);
+    activityForValidation.set("Message", "Asset Request");
+    activityForValidation.set("DateAndTime", moment().format());
+    await activityForValidation.save();
+
+
+    query.equalTo("tokenid", req.body.tokenid);
+    query.equalTo("ownerwltaddress", user.address);
+    let yourNFT = await query.first();
+    
+    if(yourNFT){
+        yourNFT.set("redeemNFTrequest", "True");
+        yourNFT.save();
+    }
+    res.json({
+        message:"Request send"
+    })
+}
 
 exports.redeemNFT = async (req, res) => {
     const authHeader = req.headers.authorization;
@@ -725,3 +772,4 @@ exports.redeemNFT = async (req, res) => {
     }
     res.send({ result: "NFT Redeem, Successfully" })
 }
+

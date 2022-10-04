@@ -6,7 +6,7 @@ module.exports = app => {
     app.get("/PriceRange",access_token.authenticateJWT, dashboard.PriceRange);
 
     //Search NFT by name
-    app.get("/SearchNFTbyname",access_token.authenticateJWT, dashboard.SearchNFTbyname);
+    app.get("/SearchNFTbyname", dashboard.SearchNFTbyname);
 
     //NFT Detail
     app.get("/NFTdetail",access_token.authenticateJWT, dashboard.NFTdetail);

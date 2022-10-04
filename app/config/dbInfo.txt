@@ -58,6 +58,12 @@
 37.mpreserveforspecificbuyer = Marketplace reserve for specific buyer
 38.mpfees = Marketplace fees
 39.redeemNFTstatus=True and False
+40.redeemNFTrequest=true False Accepted
+{
+    False:when NFT will be creating
+    true : when owner will send the request
+    Accepted: when validator will accept it
+}
 
 2.#nftForValidation
 
@@ -155,6 +161,7 @@ Message = Message can be anything which will be the user activity
         ~ Locked Money Reciever (Validator)
         ~ Asset NFT Reciever (You, Who is burning it)
     }
+    8.Request Accepted for Redeem
 }
 validatorwltaddress
 validatorname = Asset NFT Reciever (Validator) in burn NFT

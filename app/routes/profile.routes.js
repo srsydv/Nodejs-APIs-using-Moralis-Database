@@ -64,4 +64,7 @@ module.exports = app => {
 
     //Validated NFT of a single user for public Dashboard
     app.get("/userValidatedNFTs",access_token.authenticateJWT, profileControler.userValidatedNFTs);
+
+    //Send redeem request to validator
+    app.post("/sendredeemreq",access_token.authenticateJWT, profileControler.sendredeemreq)
 }

@@ -29,7 +29,13 @@ exports.SearchNFTbyname = async (req, res) => {
     query.skip(toSkip);
     query.limit(pageSize);
     let data = await query.find();
-    res.json(data)
+    if(data.length>0){
+        res.json({message:"NFTs",
+            data:data})
+    }else{
+        res.json({message:"No NFT found"})
+    }
+    
 
 }
 

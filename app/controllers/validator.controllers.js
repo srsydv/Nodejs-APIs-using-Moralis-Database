@@ -588,3 +588,43 @@ exports.validationRequestForSingleNFT = async (req, res) => {
     }
 
 }
+
+
+exports.acceptRedeemReq = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const validatorDetail = await validatorModel.validatorDetail(user.address);
+    const clm = {
+        tokenid: req.body.tokenid,
+        assetname: req.body.assetname
+    }
+    const NFTdetails = await validatorModel.NFTdetails(clm);
+
+    let userActivity = Moralis.Object.extend("activityForUser");
+    let ForValidation = new userActivity();
+    ForValidation.set("assetname", req.body.assetname);
+    ForValidation.set("tokenid", req.body.tokenid);
+    ForValidation.set("username", NFTdetails.attributes.ownerusername);
+    ForValidation.set("name", NFTdetails.attributes.ownername);
+    ForValidation.set("userwltaddress", NFTdetails.attributes.ownerwltaddress);
+    ForValidation.set("validatorwltaddress", user.address);
+    ForValidation.set("validatorname", validatorDetail.attributes.name);
+    ForValidation.set("validatorusername", validatorDetail.attributes.username);
+    ForValidation.set("Message", "Request Accepted for Redeem");
+    ForValidation.set("DateAndTime", moment().format());
+    await ForValidation.save();
+
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("tokenid", req.body.tokenid);
+    let yourNFT = await query.first();
+    
+    if(yourNFT){
+        yourNFT.set("redeemNFTrequest", "Accepted");
+        yourNFT.save();
+    }
+    res.json({
+        message:"Request Accepted"
+    })
+
+}

@@ -47,4 +47,7 @@ module.exports = app => {
     //Check validation request for single NFT
     app.get("/validationRequestForSingleNFT",access_token.authenticateJWT, validatorControler.validationRequestForSingleNFT);
 
+    //Accept redeem request by validator
+    app.post("/acceptRedeemReq",access_token.authenticateJWT, validatorControler.acceptRedeemReq)
+
 }
