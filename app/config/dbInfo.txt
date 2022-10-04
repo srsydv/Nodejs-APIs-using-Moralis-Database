@@ -57,6 +57,7 @@
 36.mpsetasbundle = Marketplace set as bundle
 37.mpreserveforspecificbuyer = Marketplace reserve for specific buyer
 38.mpfees = Marketplace fees
+39.redeemNFTstatus=True and False
 
 2.#nftForValidation
 
@@ -89,6 +90,7 @@
 22.nftimage2
 23.nftimage3
 24.sendforvalidationdate = moment().format() when the NFT is going to send for validation.
+
 
 3.#favouritenft
 

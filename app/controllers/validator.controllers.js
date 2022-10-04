@@ -349,6 +349,7 @@ exports.validatateNFT = async (req, res) => {
         NFTDetail.set("validatorname", validatorDetail.attributes.name);
         NFTDetail.set("validatorusername", validatorDetail.attributes.username);
         NFTDetail.set("validatorwltaddress", user.address);
+        NFTDetail.set("validateAmount", req.body.validateAmount);
         await NFTDetail.save();
         flag = 1;
     }
@@ -364,6 +365,7 @@ exports.validatateNFT = async (req, res) => {
     ForValidation.set("validatorname", validatorDetail.attributes.name);
     ForValidation.set("validatorusername", validatorDetail.attributes.username);
     ForValidation.set("Message", "Charged NFT");
+    ForValidation.set("validateAmount", req.body.validateAmount);
     ForValidation.set("DateAndTime", moment().format());
     await ForValidation.save();
 
@@ -382,6 +384,7 @@ exports.validatateNFT = async (req, res) => {
     activityForValidation.set("createrwltaddress", NFTdetails.attributes.createrwltaddress);
     activityForValidation.set("userWltAddress", user.address);
     activityForValidation.set("Message", "Validation Done");
+    activityForValidation.set("validateAmount", req.body.validateAmount);
     activityForValidation.set("DateAndTime", moment().format());
     await activityForValidation.save();
 
@@ -395,6 +398,8 @@ exports.validatateNFT = async (req, res) => {
         oldNFT.set("validatorname", validatorDetail.attributes.name);
         oldNFT.set("validatorusername", validatorDetail.attributes.username);
         oldNFT.set("validatorwltaddress", user.address);
+        oldNFT.set("validateAmount", req.body.validateAmount);
+        
         if (flag == 1) {
             await oldNFT.save();
             res.send({ result: "Validated" })

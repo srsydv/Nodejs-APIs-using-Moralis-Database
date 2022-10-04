@@ -715,7 +715,12 @@ exports.redeemNFT = async (req, res) => {
     query.equalTo("tokenid", req.body.tokenid);
     let NFTburnStatus = await query.first();
     if (NFTburnStatus) {
-        NFTburnStatus.set("burnNFTstatus", "True");
+        NFTburnStatus.set("redeemNFTstatus", "True");
+        NFTburnStatus.set("validationstate", "Not Started");
+        NFTburnStatus.set("validatorname", "");
+        NFTburnStatus.set("validatorusername", "");
+        NFTburnStatus.set("validatorwltaddress", "");
+        NFTburnStatus.set("validateAmount", "");
         await NFTburnStatus.save();
     }
     res.send({ result: "NFT Redeem, Successfully" })
