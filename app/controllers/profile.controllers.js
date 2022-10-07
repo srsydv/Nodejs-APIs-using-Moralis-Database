@@ -140,7 +140,11 @@ exports.FavouriteNFTsofUser = async (req, res) => {
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const userDetail = await profileModel.userDetailByAddress(user.address);
-
+    const clm = {
+        tokenid: req.body.tokenid,
+        assetname: req.body.assetname
+    }
+    const NFTdetails = await profileModel.NFTdetails(clm);
     let favouritenft = Moralis.Object.extend("favouritenft");
     let addfavouritenft = new favouritenft();
     addfavouritenft.set("assetname", req.body.assetname);
@@ -148,6 +152,10 @@ exports.FavouriteNFTsofUser = async (req, res) => {
     addfavouritenft.set("name", userDetail.attributes.name);
     addfavouritenft.set("username", userDetail.attributes.username);
     addfavouritenft.set("userwltaddress", user.address);
+    addfavouritenft.set("nftimage", NFTdetails.attributes.nftimage);
+    addfavouritenft.set("nftimage1", NFTdetails.attributes.nftimage1);
+    addfavouritenft.set("nftimage2", NFTdetails.attributes.nftimage2);
+    addfavouritenft.set("nftimage3", NFTdetails.attributes.nftimage3);
     let fvtnft = await addfavouritenft.save();
 
     res.send(fvtnft);
@@ -246,6 +254,7 @@ exports.onSaleNFTs = async (req, res) => {
     const userDetail = await profileModel.userDetailByAddress(user.address);
     const query = new Moralis.Query("nftprofiledetails");
     query.equalTo("ownerwltaddress", user.address);
+    query.equalTo("sellstatus", "Pending");
     query.skip(toSkip);
     query.limit(pageSize);
     let data = await query.find();
@@ -622,6 +631,10 @@ exports.userNFTs = async (req, res) => {
     const pageSize = 30;
     const toSkip = ((req.query.page - 1) * pageSize);
     query1.equalTo("ownerwltaddress", req.query.useraddress);
+    query1.containedIn("validationstate", [
+        "Validated",
+        "pending",
+      ]);
     query1.skip(toSkip);
     query1.limit(pageSize);
     let data = await query1.find();
