@@ -372,6 +372,16 @@ exports.reqForSwapAsset = async (req, res) => {
         swapNFT.set("swapStatus", `Pending, Swapping Request with tokenId ${req.body.toswaptokenid}`);
         await swapNFT.save();
     }
+
+    const queryForReq = new Moralis.Query("nftprofiledetails");
+    queryForReq.equalTo("assetname", req.body.toswapassetname);
+    queryForReq.equalTo("tokenid", req.body.toswaptokenid);
+    let swapNFTreq = await queryForReq.first();
+    if (swapNFTreq) {
+        swapNFTreq.set("swapStatus", `Pending, Swapping Request with tokenId ${req.body.tokenid}`);
+        await swapNFTreq.save();
+    }
+
     res.send({ result: "Swap Request Sent, Successfully" })
 }
 
