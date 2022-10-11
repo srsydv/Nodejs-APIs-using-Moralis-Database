@@ -45,6 +45,7 @@ require("./app/routes/auth.routes.js")(app);
 require("./app/routes/profile.routes.js")(app);
 require("./app/routes/validator.routes.js")(app);
 require("./app/routes/dashboard.routes.js")(app);
+require("./app/routes/marketplace.routes.js")(app);
 
 
 const PORT = process.env.PORT ||4000;

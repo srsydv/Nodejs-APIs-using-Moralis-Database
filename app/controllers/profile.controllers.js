@@ -89,6 +89,8 @@ exports.createNFT = async (req, res) => {
     newNft.set("swapStatus", "Not Started");
     newNft.set("sellstatus", "Not Started");
     newNft.set("redeemNFTrequest", "False");
+    newNft.set("receiveswaprequest", "");
+    newNft.set("sendswaprequest", "");
 
     let nft = await newNft.save();
     res.json(nft);
@@ -367,9 +369,14 @@ exports.reqForSwapAsset = async (req, res) => {
     const query = new Moralis.Query("nftprofiledetails");
     query.equalTo("assetname", req.body.assetname);
     query.equalTo("tokenid", req.body.tokenid);
+    const nn = req.body.toswaptokenid
     let swapNFT = await query.first();
-    if (swapNFT) {
-        swapNFT.set("swapStatus", `Pending, Swapping Request with tokenId ${req.body.toswaptokenid}`);
+    if (swapNFT.attributes.sendswaprequest.length==0) {
+        swapNFT.set("sendswaprequest", `${req.body.toswaptokenid}`);
+        await swapNFT.save();
+    }
+    else if (swapNFT.attributes.sendswaprequest.length>0) {
+        swapNFT.set("sendswaprequest", `${swapNFT.attributes.sendswaprequest+','+req.body.toswaptokenid}`);
         await swapNFT.save();
     }
 
@@ -377,8 +384,12 @@ exports.reqForSwapAsset = async (req, res) => {
     queryForReq.equalTo("assetname", req.body.toswapassetname);
     queryForReq.equalTo("tokenid", req.body.toswaptokenid);
     let swapNFTreq = await queryForReq.first();
-    if (swapNFTreq) {
-        swapNFTreq.set("swapStatus", `Pending, Swapping Request with tokenId ${req.body.tokenid}`);
+    if (swapNFTreq.attributes.receiveswaprequest.length==0) {
+        swapNFTreq.set("receiveswaprequest", `${req.body.tokenid}`);
+        await swapNFTreq.save();
+    }
+    else if (swapNFTreq.attributes.receiveswaprequest.length>0) {
+        swapNFTreq.set("receiveswaprequest", `${swapNFTreq.attributes.receiveswaprequest+','+req.body.tokenid}`);
         await swapNFTreq.save();
     }
 
@@ -414,21 +425,21 @@ exports.acceptSwapRequest = async (req, res) => {
     reqForSwap.set("DateAndTime", moment().format());
     await reqForSwap.save();
 
-    // let getSwapped = new userActivity();
-    // getSwapped.set("assetname", req.body.toswapassetname);
-    // getSwapped.set("tokenid", req.body.toswaptokenid);
-    // getSwapped.set("toswapassetname", req.body.assetname);
-    // getSwapped.set("toswaptokenid", req.body.tokenid);
-    // getSwapped.set("swaprequestuserwltAddress", user.address);
-    // getSwapped.set("swaprequestname", userDetail.attributes.name);
-    // getSwapped.set("swaprequestusername", userDetail.attributes.username);
-    // getSwapped.set("username", NFTdetails.attributes.ownerusername);
-    // getSwapped.set("name", NFTdetails.attributes.ownername);
-    // getSwapped.set("userwltaddress", NFTdetails.attributes.ownerwltaddress);
-    // //Here will be in sign for swap request
-    // getSwapped.set("Message", "Swap Request IN");
-    // getSwapped.set("DateAndTime", moment().format());
-    // await getSwapped.save();
+    let getSwapped = new userActivity();
+    getSwapped.set("assetname", req.body.toswapassetname);
+    getSwapped.set("tokenid", req.body.toswaptokenid);
+    getSwapped.set("toswapassetname", req.body.assetname);
+    getSwapped.set("toswaptokenid", req.body.tokenid);
+    getSwapped.set("swaprequestuserwltAddress", user.address);
+    getSwapped.set("swaprequestname", userDetail.attributes.name);
+    getSwapped.set("swaprequestusername", userDetail.attributes.username);
+    getSwapped.set("username", NFTdetails.attributes.ownerusername);
+    getSwapped.set("name", NFTdetails.attributes.ownername);
+    getSwapped.set("userwltaddress", NFTdetails.attributes.ownerwltaddress);
+    //Here will be in sign for swap request
+    getSwapped.set("Message", "Swap Request IN");
+    getSwapped.set("DateAndTime", moment().format());
+    await getSwapped.save();
 
     const query = new Moralis.Query("nftprofiledetails");
     query.equalTo("assetname", req.body.assetname);
@@ -439,6 +450,8 @@ exports.acceptSwapRequest = async (req, res) => {
         swappedNFT.set("ownerusername", NFTdetails.attributes.ownerusername);
         swappedNFT.set("ownername", NFTdetails.attributes.ownername)
         swappedNFT.set("ownerwltaddress", NFTdetails.attributes.ownerwltaddress)
+        swappedNFT.set("receiveswaprequest", "")
+        swappedNFT.set("sendswaprequest", "")
         await swappedNFT.save();
     }
 
@@ -451,10 +464,83 @@ exports.acceptSwapRequest = async (req, res) => {
         changeOwnerNFT.set("ownerusername", userDetail.attributes.username);
         changeOwnerNFT.set("ownername", userDetail.attributes.name)
         changeOwnerNFT.set("ownerwltaddress", user.address)
+        changeOwnerNFT.set("receiveswaprequest", "")
+        changeOwnerNFT.set("sendswaprequest", "")
         await changeOwnerNFT.save();
     }
 
     res.send({ result: "Swapped Successfully" })
+}
+
+
+exports.cancleSwapRequest = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    var user = jwt.decode(token, process.env.JWT_SECRET)
+    const userDetail = await profileModel.userDetailByAddress(user.address);
+
+    const clm = {
+        tokenid: req.body.toswaptokenid,
+        assetname: req.body.toswapassetname
+    }
+    const NFTdetails = await profileModel.NFTdetails(clm);
+    let userActivity = Moralis.Object.extend("activityForUser");
+    let reqForSwap = new userActivity();
+    reqForSwap.set("assetname", req.body.assetname);
+    reqForSwap.set("tokenid", req.body.tokenid);
+    reqForSwap.set("toswapassetname", req.body.toswapassetname);
+    reqForSwap.set("toswaptokenid", req.body.toswaptokenid);
+    reqForSwap.set("swaprequesttouserwltAddress", NFTdetails.attributes.ownerwltaddress);
+    reqForSwap.set("swaprequesttoname", NFTdetails.attributes.ownername);
+    reqForSwap.set("swaprequesttousername", NFTdetails.attributes.ownerusername);
+    reqForSwap.set("username", userDetail.attributes.username);
+    reqForSwap.set("name", userDetail.attributes.name);
+    reqForSwap.set("userwltaddress", user.address);
+    reqForSwap.set("Message", "Swap Request Cancled");
+    reqForSwap.set("DateAndTime", moment().format());
+    await reqForSwap.save();
+
+    let getSwapped = new userActivity();
+    getSwapped.set("assetname", req.body.toswapassetname);
+    getSwapped.set("tokenid", req.body.toswaptokenid);
+    getSwapped.set("toswapassetname", req.body.assetname);
+    getSwapped.set("toswaptokenid", req.body.tokenid);
+    getSwapped.set("swaprequestuserwltAddress", user.address);
+    getSwapped.set("swaprequestname", userDetail.attributes.name);
+    getSwapped.set("swaprequestusername", userDetail.attributes.username);
+    getSwapped.set("username", NFTdetails.attributes.ownerusername);
+    getSwapped.set("name", NFTdetails.attributes.ownername);
+    getSwapped.set("userwltaddress", NFTdetails.attributes.ownerwltaddress);
+    //Here will be in sign for swap request
+    getSwapped.set("Message", "Swap Request Cancled");
+    getSwapped.set("DateAndTime", moment().format());
+    await getSwapped.save();
+
+    const query = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.assetname);
+    query.equalTo("tokenid", req.body.tokenid);
+    let swappedNFT = await query.first();
+    if (swappedNFT) {
+        swappedNFT.set("swapStatus", `Swap Request Cancled with tokenId ${req.body.toswaptokenid}`);
+        swappedNFT.set("ownerusername", NFTdetails.attributes.ownerusername);
+        swappedNFT.set("ownername", NFTdetails.attributes.ownername)
+        swappedNFT.set("ownerwltaddress", NFTdetails.attributes.ownerwltaddress)
+        await swappedNFT.save();
+    }
+
+    const newquery = new Moralis.Query("nftprofiledetails");
+    query.equalTo("assetname", req.body.toswapassetname);
+    query.equalTo("tokenid", req.body.toswaptokenid);
+    let changeOwnerNFT = await newquery.first();
+    if (changeOwnerNFT) {
+        changeOwnerNFT.set("swapStatus", `Swap Request Cancled with tokenId ${req.body.tokenid}`);
+        changeOwnerNFT.set("ownerusername", userDetail.attributes.username);
+        changeOwnerNFT.set("ownername", userDetail.attributes.name)
+        changeOwnerNFT.set("ownerwltaddress", user.address)
+        await changeOwnerNFT.save();
+    }
+
+    res.send({ result: "Swap Request Cancled" })
 }
 
 
