@@ -53,7 +53,6 @@ const login2 = async (clm) => {
         const query = new Moralis.Query(userDetail);
         query.equalTo("address", (clm.address).toLowerCase());
         let data = await query.find();
-        // console.log("ghjjk",data[0].attributes)
         if (data) {
             resolve(data[0]);
         } else {
@@ -69,7 +68,6 @@ const validatorLogin = async (clm) => {
         const query = new Moralis.Query(userDetail);
         query.equalTo("address", (clm.address).toLowerCase());
         let data = await query.find();
-        // console.log("ghjjk",data[0].attributes)
         if (data) {
             resolve(data[0]);
         } else {

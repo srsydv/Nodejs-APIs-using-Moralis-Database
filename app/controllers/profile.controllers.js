@@ -108,13 +108,13 @@ exports.updateNFTDetail = async (req, res) => {
 
 
 exports.myNFTs = async (req, res) => {
-    const query = new Moralis.Query("nftprofiledetails");
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)
-    const pageSize = 30;
-    const toSkip = ((req.body.page - 1) * pageSize);
+    const query = new Moralis.Query("nftprofiledetails");
     query.equalTo("createrwltaddress", req.query.useraddress);
+    const pageSize = 2;
+    const toSkip = ((req.body.page - 1) * pageSize);
     query.skip(toSkip);
     query.limit(pageSize);
     let data = await query.find();
@@ -720,12 +720,12 @@ exports.AllActivities = async (req, res) => {
 
 
 exports.userNFTs = async (req, res) => {
-    const query1 = new Moralis.Query("nftprofiledetails");
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     var user = jwt.decode(token, process.env.JWT_SECRET)
     const pageSize = 30;
     const toSkip = ((req.query.page - 1) * pageSize);
+    const query1 = new Moralis.Query("nftprofiledetails");
     query1.equalTo("ownerwltaddress", req.query.useraddress);
     query1.containedIn("validationstate", [
         "Validated",
